@@ -1,8 +1,9 @@
-import { Stage, Container } from '@pixi/react';
+import { Stage } from '@pixi/react';
 import { useMemo, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import SlimeWalk from 'sprites/slime/SlimeWalk';
+import Grassland from 'sprites/settings/Grassland';
 
 const FullScreenWrapper = styled.div`
   width: 100%;
@@ -17,9 +18,8 @@ function View({ stageProps }) {
   return (
     <FullScreenWrapper>
       <Stage {...stageProps}>
-        <Container x={400} y={330}>
-          <SlimeWalk x={100} y={100} />
-        </Container>
+        <Grassland />
+        <SlimeWalk x={100} y={100} />
       </Stage>
     </FullScreenWrapper>
   );
