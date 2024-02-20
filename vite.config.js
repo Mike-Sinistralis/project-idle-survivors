@@ -16,6 +16,7 @@ export default defineConfig({
       common: '/src/common',
       game: '/src/game',
       root: '/src/root',
+      sprites: '/src/sprites',
     },
   },
 });

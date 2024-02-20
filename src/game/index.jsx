@@ -1,7 +1,8 @@
-import { Stage, Container, Text } from '@pixi/react';
-import { BlurFilter, TextStyle } from 'pixi.js';
+import { Stage, Container } from '@pixi/react';
 import { useMemo, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+
+import SlimeWalk from 'sprites/slime/SlimeWalk';
 
 const FullScreenWrapper = styled.div`
   width: 100%;
@@ -12,12 +13,12 @@ const FullScreenWrapper = styled.div`
   }
 `;
 
-function View({ blurFilter, stageProps, textStyle }) {
+function View({ stageProps }) {
   return (
     <FullScreenWrapper>
       <Stage {...stageProps}>
         <Container x={400} y={330}>
-          <Text text="Hello World" anchor={{ x: 0.5, y: 0.5 }} style={textStyle} filters={[blurFilter]} />
+          <SlimeWalk x={100} y={100} />
         </Container>
       </Stage>
     </FullScreenWrapper>
@@ -25,12 +26,6 @@ function View({ blurFilter, stageProps, textStyle }) {
 }
 
 function Model() {
-  const blurFilter = useMemo(() => new BlurFilter(4), []);
-
-  const textStyle = useMemo(() => new TextStyle({
-    fill: 'white', // Set the text color to black
-  }), []);
-
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -51,14 +46,14 @@ function Model() {
   const stageProps = useMemo(() => ({
     width: windowSize.width,
     height: windowSize.height,
-    backgroundColor: 0x1099bb,
-    antialias: true,
+    options: {
+      backgroundAlpha: 0,
+      antialias: true,
+    },
   }), [windowSize]);
 
   const hookProps = {
-    blurFilter,
     stageProps,
-    textStyle,
   };
 
   return (
