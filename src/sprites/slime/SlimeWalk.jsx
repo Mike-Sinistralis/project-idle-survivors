@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Texture, BaseTexture, Rectangle } from 'pixi.js';
 import SlimeWalkSheet from 'assets/slime-walk.png';
 
-const slimeSpeed = 5;
 const offScreenMax = -80;
 
 function SlimeWalk({ stageWidth, stageHeight, ...props }) {
@@ -33,6 +32,8 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   }, [textures]);
 
   useTick((delta) => {
+    const slimeSpeed = Math.random() * 5 + 3;
+
     // Update position based on direction and delta time
     const newPos = {
       x: position.x + direction.x * slimeSpeed * delta,
