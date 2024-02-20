@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Texture, BaseTexture, Rectangle } from 'pixi.js';
 import SlimeWalkSheet from 'assets/slime-walk.png';
 
+const slimeSpeed = 5;
+const offScreenMax = -80;
+
 function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   const app = useApp();
   const [textures, setTextures] = useState([]);
@@ -31,20 +34,19 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
 
   useTick((delta) => {
     // Update position based on direction and delta time
-    const slimeSpeed = 5;
     const newPos = {
       x: position.x + direction.x * slimeSpeed * delta,
       y: position.y + direction.y * slimeSpeed * delta,
     };
 
     // Boundary checks and update direction if out of bounds
-    if (newPos.x < 0 || newPos.x > stageWidth) {
+    if (newPos.x < offScreenMax || newPos.x > stageWidth) {
       setDirection((prev) => ({ ...prev, x: -prev.x }));
-      newPos.x = newPos.x < 0 ? 0 : stageWidth;
+      newPos.x = newPos.x < 0 ? offScreenMax : stageWidth;
     }
-    if (newPos.y < 0 || newPos.y > stageHeight) {
+    if (newPos.y < offScreenMax || newPos.y > stageHeight) {
       setDirection((prev) => ({ ...prev, y: -prev.y }));
-      newPos.y = newPos.y < 0 ? 0 : stageHeight;
+      newPos.y = newPos.y < 0 ? offScreenMax : stageHeight;
     }
 
     setPosition(newPos);
