@@ -28,7 +28,7 @@ function Grassland({ ...props }) {
 
       setScale(coverScale);
     }
-  }, [app, texture]);
+  }, [app.screen.height, app.screen.width, texture]);
 
   if (!texture) {
     return null;
