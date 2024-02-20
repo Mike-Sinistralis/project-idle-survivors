@@ -19,7 +19,7 @@ function View({ stageProps }) {
     <FullScreenWrapper>
       <Stage {...stageProps}>
         <Grassland />
-        <SlimeWalk x={100} y={100} />
+        <SlimeWalk stageWidth={stageProps.width} stageHeight={stageProps.height} />
       </Stage>
     </FullScreenWrapper>
   );
