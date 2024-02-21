@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { create } from 'zustand';
 
 // Global Context - Changes here affect all slimes
@@ -30,6 +30,12 @@ const useSlime = () => {
       return { ...prev, speed: newSpeed < 0 ? 0 : newSpeed };
     });
   }, []);
+
+  useEffect(() => {
+    if (stats.health <= 0) {
+      console.log('Slime is dead');
+    }
+  }, [stats.health]);
 
   return { stats, onSlow, onDamaged };
 };
