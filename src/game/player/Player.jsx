@@ -2,7 +2,7 @@ import { useUserInput } from 'game/sprites/SpriteManager';
 import { usePrevious } from 'common/hooks/usePrevious';
 import { useEffect } from 'react';
 
-function SlimeWalk() {
+function Player() {
   const { pressed } = useUserInput();
   const previousPressed = usePrevious(pressed);
 
@@ -14,4 +14,4 @@ function SlimeWalk() {
   return false;
 }
 
-export default SlimeWalk;
+export default Player;
