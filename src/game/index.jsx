@@ -19,7 +19,7 @@ function View({ stageProps }) {
     <FullScreenWrapper>
       <Stage {...stageProps}>
         <Grassland />
-        {Array.from({ length: 5000 }).map((_, i) => (
+        {Array.from({ length: 10 }).map((_, i) => (
           // eslint-disable-next-line react/no-array-index-key
           <SlimeWalk key={i} stageWidth={stageProps.width} stageHeight={stageProps.height} />
         ))}
