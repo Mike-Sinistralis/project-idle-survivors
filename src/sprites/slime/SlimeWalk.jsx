@@ -1,8 +1,10 @@
 import { AnimatedSprite, useApp, useTick } from '@pixi/react';
-import { useEffect, useRef, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { Texture, BaseTexture, Rectangle } from 'pixi.js';
 import SlimeWalkSheet from 'assets/slime-walk.png';
-import { useSlimeStore } from './slimeStore';
+import { useSlime } from 'sprites/slime/useSlime';
 
 const offScreenMax = -80;
 
@@ -12,7 +14,9 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   const spriteRef = useRef(null);
   const [position, setPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
   const [direction, setDirection] = useState({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 });
-  const { baseSpeed, getSpeedModifier } = useSlimeStore();
+
+  const { stats, onSlow } = useSlime();
+  const { speed } = stats;
 
   useEffect(() => {
     const baseTexture = BaseTexture.from(SlimeWalkSheet);
@@ -34,12 +38,10 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   }, [textures]);
 
   useTick((delta) => {
-    const slimeSpeed = baseSpeed + getSpeedModifier();
-
     // Update position based on direction and delta time
     const newPos = {
-      x: position.x + direction.x * slimeSpeed * delta,
-      y: position.y + direction.y * slimeSpeed * delta,
+      x: position.x + direction.x * speed * delta,
+      y: position.y + direction.y * speed * delta,
     };
 
     // Boundary checks and update direction if out of bounds
@@ -55,6 +57,10 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
     setPosition(newPos);
   });
 
+  const handleSlimeClick = useCallback(() => {
+    onSlow(1);
+  }, [onSlow]);
+
   if (textures.length === 0) {
     return null;
   }
@@ -67,6 +73,9 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
       loop
       scale={{ x: 0.75, y: 0.75 }}
       position={position}
+      interactive // Make the sprite interactive
+      buttonMode // Changes the cursor on hover
+      pointerdown={handleSlimeClick} // Add the click event listener
       {...props}
     />
   );
