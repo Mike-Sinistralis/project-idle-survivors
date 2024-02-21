@@ -28,6 +28,12 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
     }
 
     setTextures(frames);
+
+    return () => {
+      // Cleanup textures
+      frames.forEach((texture) => texture.destroy(true));
+      baseTexture.destroy();
+    };
   }, [app]);
 
   useEffect(() => {
@@ -36,6 +42,27 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
       spriteRef.current.play();
     }
   }, [textures]);
+
+  const handleSlimeClick = useCallback(() => {
+    onSlow(1);
+  }, [onSlow]);
+
+  useEffect(() => {
+    const sprite = spriteRef.current;
+
+    if (sprite && textures.length > 0) {
+      sprite.interactive = true; // Make the sprite interactive
+      sprite.buttonMode = true; // Change the cursor on hover
+      sprite.on('pointertap', handleSlimeClick); // Add an event listener
+    }
+
+    return () => {
+      // Cleanup function
+      if (sprite) {
+        sprite.off('pointertap', handleSlimeClick); // Remove the event listener
+      }
+    };
+  }, [handleSlimeClick, textures]);
 
   useTick((delta) => {
     // Update position based on direction and delta time
@@ -56,10 +83,6 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
 
     setPosition(newPos);
   });
-
-  const handleSlimeClick = useCallback(() => {
-    onSlow(1);
-  }, [onSlow]);
 
   if (textures.length === 0) {
     return null;

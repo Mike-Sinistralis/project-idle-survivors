@@ -34,6 +34,7 @@ const useSlime = () => {
   useEffect(() => {
     if (stats.health <= 0) {
       console.log('Slime is dead');
+      // kill slime and cleanup memory (which likely means that we either need a "cleanup" function passed in, or all more slime logic needs moved into this hook)
     }
   }, [stats.health]);
 
