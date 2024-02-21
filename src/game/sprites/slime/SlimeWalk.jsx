@@ -4,7 +4,7 @@ import {
 } from 'react';
 import { Texture, BaseTexture, Rectangle } from 'pixi.js';
 import SlimeWalkSheet from 'assets/slime-walk.png';
-import { useSlime } from 'sprites/slime/useSlime';
+import { useSlime } from 'game/sprites/slime/useSlime';
 
 const offScreenMax = -80;
 
@@ -23,7 +23,6 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   const spriteRef = useRef(null);
   const [position, setPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
   const [direction, setDirection] = useState({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 });
-
   const { stats, onSlow } = useSlime();
   const { speed } = stats;
 

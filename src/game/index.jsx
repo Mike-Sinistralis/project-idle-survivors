@@ -2,8 +2,9 @@ import { Stage } from '@pixi/react';
 import { useMemo, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 
-import SlimeWalk from 'sprites/slime/SlimeWalk';
-import Grassland from 'sprites/settings/Grassland';
+import SlimeWalk from 'game/sprites/slime/SlimeWalk';
+import Grassland from 'game/sprites/settings/Grassland';
+import UserInputManager from 'game/managers/UserInputManager';
 
 const FullScreenWrapper = styled.div`
   width: 100%;
@@ -18,6 +19,7 @@ function View({ stageProps }) {
   return (
     <FullScreenWrapper>
       <Stage {...stageProps}>
+        <UserInputManager />
         <Grassland />
         {Array.from({ length: 10 }).map((_, i) => (
           // eslint-disable-next-line react/no-array-index-key
