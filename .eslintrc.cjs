@@ -37,6 +37,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 0, // Spreading makes passing props from model to view way less redundant
     'react/react-in-jsx-scope': 0, // no longer nessecary
     'react/prop-types': 0, // Proptypes don't really offer much value but consume a lot of time
+    'import/prefer-default-export': 0, // Default exports require more refactoring when you want to add more exports
 
     'react/jsx-no-target-blank': 'off',
     'react-refresh/only-export-components': [
