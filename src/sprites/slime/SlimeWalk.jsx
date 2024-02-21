@@ -8,6 +8,15 @@ import { useSlime } from 'sprites/slime/useSlime';
 
 const offScreenMax = -80;
 
+// TODO: Should live in a texture manager with cleanup
+const baseTexture = BaseTexture.from(SlimeWalkSheet);
+const frames = [];
+
+for (let i = 0; i < 8; i += 1) {
+  const frame = new Rectangle(i * 128, 0, 128, 128);
+  frames.push(new Texture(baseTexture, frame));
+}
+
 function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   const app = useApp();
   const [textures, setTextures] = useState([]);
@@ -19,21 +28,7 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   const { speed } = stats;
 
   useEffect(() => {
-    const baseTexture = BaseTexture.from(SlimeWalkSheet);
-    const frames = [];
-
-    for (let i = 0; i < 8; i += 1) {
-      const frame = new Rectangle(i * 128, 0, 128, 128);
-      frames.push(new Texture(baseTexture, frame));
-    }
-
     setTextures(frames);
-
-    return () => {
-      // Cleanup textures
-      frames.forEach((texture) => texture.destroy(true));
-      baseTexture.destroy();
-    };
   }, [app]);
 
   useEffect(() => {
