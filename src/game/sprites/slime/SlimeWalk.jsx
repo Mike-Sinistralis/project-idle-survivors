@@ -3,6 +3,7 @@ import {
   useCallback, useEffect, useState,
 } from 'react';
 import { useSlime } from 'game/sprites/slime/useSlime';
+import { useViewportOffset } from 'game/managers/hooks/useViewportOffset';
 import useRenderable, { RENDER_IDS } from '../hooks/useRenderable';
 
 const offScreenMax = -80;
@@ -12,7 +13,9 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
     renderId: RENDER_IDS.SLIME,
   });
 
-  const [position, setPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
+  const viewport = useViewportOffset();
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [screenPosition, setScreenPosition] = useState({ x: 0, y: 0 });
   const [direction, setDirection] = useState({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 });
   const { stats, onSlow } = useSlime();
   const { speed } = stats;
@@ -45,17 +48,21 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
       y: position.y + direction.y * speed * delta,
     };
 
+    const newScreenPos = {
+      x: (stageWidth / 2) - viewport.offset.x + position.x,
+      y: (stageHeight / 2) - viewport.offset.y + position.y,
+    };
+
     // Boundary checks and update direction if out of bounds
-    if (newPos.x < offScreenMax || newPos.x > stageWidth) {
+    if ((newScreenPos.x < offScreenMax && direction.x < 0) || (newScreenPos.x > stageWidth && direction.x > 0)) {
       setDirection((prev) => ({ ...prev, x: -prev.x }));
-      newPos.x = newPos.x < 0 ? offScreenMax : stageWidth;
     }
-    if (newPos.y < offScreenMax || newPos.y > stageHeight) {
+    if ((newScreenPos.y < offScreenMax && direction.y < 0) || (newScreenPos.y > stageHeight && direction.y > 0)) {
       setDirection((prev) => ({ ...prev, y: -prev.y }));
-      newPos.y = newPos.y < 0 ? offScreenMax : stageHeight;
     }
 
     setPosition(newPos);
+    setScreenPosition(newScreenPos);
   });
 
   if (textures.length === 0) {
@@ -66,7 +73,7 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
     <AnimatedSprite
       ref={spriteRef}
       textures={textures}
-      position={position}
+      position={screenPosition}
       interactive // Make the sprite interactive
       buttonMode // Changes the cursor on hover
       pointerdown={handleSlimeClick} // Add the click event listener

@@ -6,6 +6,7 @@ import { keyStore } from 'game/managers/hooks/useUserInput';
 import { usePrevious } from 'common/hooks/usePrevious';
 import PlayerSprite from 'assets/player.png';
 import useRenderable, { RENDER_IDS } from 'game/sprites/hooks/useRenderable';
+import { useViewportOffset } from 'game/managers/hooks/useViewportOffset';
 import { usePlayer } from './hooks/usePlayer';
 
 const baseTexture = BaseTexture.from(PlayerSprite);
@@ -24,7 +25,9 @@ function Player({ stageWidth, stageHeight, ...props }) {
     renderId: RENDER_IDS.PLAYER,
   });
 
-  const [position, setPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
+  const viewport = useViewportOffset();
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [screenPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
   const [direction, setDirection] = useState({ x: 0, y: 0 });
 
   const { stats } = usePlayer();
@@ -57,6 +60,7 @@ function Player({ stageWidth, stageHeight, ...props }) {
     };
 
     setPosition(newPos);
+    viewport.setOffset(newPos);
   });
 
   if (textures.length === 0) {
@@ -67,7 +71,7 @@ function Player({ stageWidth, stageHeight, ...props }) {
     <AnimatedSprite
       ref={spriteRef}
       textures={textures}
-      position={position}
+      position={screenPosition}
       {...renderableProps}
       {...props}
     />
