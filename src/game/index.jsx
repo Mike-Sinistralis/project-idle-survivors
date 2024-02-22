@@ -16,6 +16,9 @@ const FullScreenWrapper = styled.div`
   }
 `;
 
+/*
+  Figure out resolution scaling
+*/
 function View({ stageProps }) {
   return (
     <FullScreenWrapper>

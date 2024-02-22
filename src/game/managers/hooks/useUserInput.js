@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { create } from 'zustand';
 
 // Global Context - Changes here affect all slimes
-const keyStore = create((set) => ({
+const keyStore = create((set, get) => ({
   pressed: [],
   // 2 functions, one for pushing a key into pressed, and one for removing a key
   setPressed: (key) => {
@@ -16,8 +16,10 @@ const keyStore = create((set) => ({
   removePressed: (key) => {
     set((state) => ({ pressed: state.pressed.filter((k) => k !== key) }));
   },
+  isPressed: (key) => get().pressed.includes(key),
 }));
 
+// This is used by the UserInputManager only, if keys need consumed use the keyStore.
 const useUserInput = () => {
   const { setPressed, removePressed } = keyStore();
 
@@ -42,4 +44,4 @@ const useUserInput = () => {
   }, [handleKeyDown, handleKeyUp]);
 };
 
-export { useUserInput };
+export { keyStore, useUserInput };

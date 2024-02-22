@@ -1,41 +1,21 @@
-import { AnimatedSprite, useApp, useTick } from '@pixi/react';
+import { AnimatedSprite, useTick } from '@pixi/react';
 import {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useEffect, useState,
 } from 'react';
-import { Texture, BaseTexture, Rectangle } from 'pixi.js';
-import SlimeWalkSheet from 'assets/slime-walk.png';
 import { useSlime } from 'game/sprites/slime/useSlime';
+import useRenderable, { RENDER_IDS } from '../hooks/useRenderable';
 
 const offScreenMax = -80;
 
-// TODO: Should live in a texture manager with cleanup
-const baseTexture = BaseTexture.from(SlimeWalkSheet);
-const frames = [];
-
-for (let i = 0; i < 8; i += 1) {
-  const frame = new Rectangle(i * 128, 0, 128, 128);
-  frames.push(new Texture(baseTexture, frame));
-}
-
 function SlimeWalk({ stageWidth, stageHeight, ...props }) {
-  const app = useApp();
-  const [textures, setTextures] = useState([]);
-  const spriteRef = useRef(null);
+  const { textures, spriteRef, ...renderableProps } = useRenderable({
+    renderId: RENDER_IDS.SLIME,
+  });
+
   const [position, setPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
   const [direction, setDirection] = useState({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 });
   const { stats, onSlow } = useSlime();
   const { speed } = stats;
-
-  useEffect(() => {
-    setTextures(frames);
-  }, [app]);
-
-  useEffect(() => {
-    // Once textures are loaded, start the animation
-    if (textures.length > 0 && spriteRef.current) {
-      spriteRef.current.play();
-    }
-  }, [textures]);
 
   const handleSlimeClick = useCallback(() => {
     onSlow(1);
@@ -56,7 +36,7 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
         sprite.off('pointertap', handleSlimeClick); // Remove the event listener
       }
     };
-  }, [handleSlimeClick, textures]);
+  }, [handleSlimeClick, spriteRef, textures]);
 
   useTick((delta) => {
     // Update position based on direction and delta time
@@ -86,13 +66,11 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
     <AnimatedSprite
       ref={spriteRef}
       textures={textures}
-      animationSpeed={0.5}
-      loop
-      scale={{ x: 0.75, y: 0.75 }}
       position={position}
       interactive // Make the sprite interactive
       buttonMode // Changes the cursor on hover
       pointerdown={handleSlimeClick} // Add the click event listener
+      {...renderableProps}
       {...props}
     />
   );
