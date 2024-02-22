@@ -47,6 +47,8 @@ const useUserInput = () => {
       // a new key has been pressed or let go of!
     }
   }, [pressed, previousPressed]);
+
+  return { pressed, isPressed };
 };
 
 export { useUserInput };

@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import SlimeWalk from 'game/sprites/slime/SlimeWalk';
 import Grassland from 'game/sprites/settings/Grassland';
 import UserInputManager from 'game/managers/UserInputManager';
+import Player from './player/Player';
 
 const FullScreenWrapper = styled.div`
   width: 100%;
@@ -25,6 +26,7 @@ function View({ stageProps }) {
           // eslint-disable-next-line react/no-array-index-key
           <SlimeWalk key={i} stageWidth={stageProps.width} stageHeight={stageProps.height} />
         ))}
+        <Player stageWidth={stageProps.width} stageHeight={stageProps.height} />
       </Stage>
     </FullScreenWrapper>
   );
