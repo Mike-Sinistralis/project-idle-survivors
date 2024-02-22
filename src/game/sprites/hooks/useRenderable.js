@@ -13,10 +13,6 @@ export const RENDER_IDS = {
 // TODO: Maybe at some point in the future this will need expiration times
 const RENDER_CACHE = {};
 
-// const baseTexture = BaseTexture.from(PlayerSprite);
-// const frames = [];
-// frames.push(new Texture(baseTexture));
-
 function useRenderable({
   renderId,
 }) {
