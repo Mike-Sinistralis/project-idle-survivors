@@ -20,6 +20,7 @@ function Player({ stageWidth, stageHeight, ...props }) {
   const {
     textures,
     spriteRef,
+    scale,
     ...renderableProps
   } = useRenderable({
     renderId: RENDER_IDS.PLAYER,
@@ -28,6 +29,7 @@ function Player({ stageWidth, stageHeight, ...props }) {
   const viewport = useViewportOffset();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [screenPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
+  const [customScale, setCustomScale] = useState({ x: scale.x, y: scale.y });
   const [direction, setDirection] = useState({ x: 0, y: 0 });
 
   const { stats } = usePlayer();
@@ -49,8 +51,16 @@ function Player({ stageWidth, stageHeight, ...props }) {
       }
     });
 
+    // allow for flipping the sprite
+    const updateScale = (newDirection) => {
+      if ((newDirection.x < 0 && customScale.x > 0) || (newDirection.x > 0 && customScale.x < 0)) {
+        setCustomScale({ x: -customScale.x, y: customScale.y });
+      }
+    };
+
+    updateScale(normalDirection);
     setDirection(normalDirection);
-  }, [isPressed, pressed, previousPressed]);
+  }, [isPressed, pressed, previousPressed, customScale]);
 
   useTick((delta) => {
     // Update position based on direction and delta time
@@ -72,6 +82,7 @@ function Player({ stageWidth, stageHeight, ...props }) {
       ref={spriteRef}
       textures={textures}
       position={screenPosition}
+      scale={customScale}
       {...renderableProps}
       {...props}
     />
