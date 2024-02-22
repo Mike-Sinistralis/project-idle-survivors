@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { TILE_ID_TO_TILE_DATA } from '../const/tileCache';
 
 export const TILE_IDS = {
+  BRICK: 'brick',
   GRID: 'grid',
   GRASS: 'grass',
 };
