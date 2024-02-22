@@ -6,7 +6,6 @@ import SlimeWalk from 'game/sprites/slime/SlimeWalk';
 import Grassland from 'game/sprites/settings/Grassland';
 import UserInputManager from 'game/managers/UserInputManager';
 import Player from './player/Player';
-import TileWorld from './sprites/settings/TiledWorld';
 
 const FullScreenWrapper = styled.div`
   width: 100%;
