@@ -30,6 +30,7 @@ function useRenderable({
     scale,
     loop,
     animationSpeed,
+    anchor,
   } = useMemo(() => RENDER_ID_TO_SPRITE_DATA[renderId], [renderId]);
 
   // On mount, check render cache for frame data. If it's missing, initialize it.
@@ -67,6 +68,7 @@ function useRenderable({
     scale,
     loop,
     animationSpeed,
+    anchor,
   };
 }
 

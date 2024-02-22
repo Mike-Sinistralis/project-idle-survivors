@@ -9,12 +9,14 @@ export const RENDER_ID_TO_SPRITE_DATA = {
     scale: { x: 0.5, y: 0.5 },
     loop: true,
     animationSpeed: 0.5,
+    anchor: 0.5, // doesn't work dunno why
   },
   slime: {
     sprite: SlimeWalkSheet,
     numberOfFrames: 8,
-    scale: { x: 0.75, y: 0.75 },
+    scale: { x: 2.0, y: 2.0 },
     loop: true,
     animationSpeed: 0.5,
+    anchor: 0.5, // doesn't work dunno why
   },
 };
