@@ -13,10 +13,6 @@ export const RENDER_IDS = {
 // TODO: Maybe at some point in the future this will need expiration times
 const RENDER_CACHE = {};
 
-// const baseTexture = BaseTexture.from(PlayerSprite);
-// const frames = [];
-// frames.push(new Texture(baseTexture));
-
 function useRenderable({
   renderId,
 }) {
@@ -27,10 +23,7 @@ function useRenderable({
   const {
     numberOfFrames,
     sprite,
-    scale,
-    loop,
-    animationSpeed,
-    anchor,
+    ...renderProps
   } = useMemo(() => RENDER_ID_TO_SPRITE_DATA[renderId], [renderId]);
 
   // On mount, check render cache for frame data. If it's missing, initialize it.
@@ -53,7 +46,7 @@ function useRenderable({
       RENDER_CACHE[renderId] = frames;
       setTextures(frames);
     }
-  }, [app, renderId]);
+  }, [app, numberOfFrames, renderId, sprite]);
 
   useEffect(() => {
     // Once textures are loaded, start the animation
@@ -65,10 +58,7 @@ function useRenderable({
   return {
     textures,
     spriteRef,
-    scale,
-    loop,
-    animationSpeed,
-    anchor,
+    ...renderProps,
   };
 }
 
