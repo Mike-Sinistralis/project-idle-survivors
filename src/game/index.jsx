@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import SlimeWalk from 'game/sprites/slime/SlimeWalk';
 import Grassland from 'game/sprites/settings/Grassland';
+import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
 import Player from './player/Player';
 
@@ -25,6 +26,7 @@ function View({ stageProps }) {
       <Stage {...stageProps}>
         <UserInputManager />
         <Grassland />
+        <Desert />
         {Array.from({ length: 10 }).map((_, i) => (
           // eslint-disable-next-line react/no-array-index-key
           <SlimeWalk key={i} stageWidth={stageProps.width} stageHeight={stageProps.height} />
