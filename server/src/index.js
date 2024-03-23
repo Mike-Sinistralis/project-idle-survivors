@@ -1,17 +1,13 @@
-// Importing dependencies
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 
-// Creating an Express application
 const app = express();
 
-// Creating a server for the app
 const server = http.createServer(app);
 
-// Integrating Socket.io with the server
 const io = socketIo(server, {
-  // options if needed
+  // https://socket.io/docs/v4/server-options
 });
 
 // Example of an Express route
@@ -21,13 +17,17 @@ app.get('/', (req, res) => {
 
 // Handling a connection event for Socket.io
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  console.log('a user connected');
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
+  // Echo back "Hello World" whenever a message is received
+  socket.on('message', (msg) => {
+    console.log('message: ' + msg);
+    socket.emit('message', 'Hello World');
   });
 
-  // Handle other events like chat messages, position updates, etc.
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 });
 
 // Setting the server to listen on a port

@@ -13,7 +13,7 @@ module.exports = {
     react: { version: '18.2'},
     "import/resolver": {
       "node": {
-        "paths": ["src"]
+        "paths": ["client/src"]
       }
     },
   },
