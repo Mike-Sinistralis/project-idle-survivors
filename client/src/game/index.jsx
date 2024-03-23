@@ -8,6 +8,7 @@ import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
 import Player from './player/Player';
 import 'game/websocket';
+import 'game/test';
 
 const FullScreenWrapper = styled.div`
   width: 100%;
