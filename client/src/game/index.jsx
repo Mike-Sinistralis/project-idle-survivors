@@ -7,6 +7,7 @@ import Grassland from 'game/sprites/settings/Grassland';
 import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
 import Player from './player/Player';
+import 'game/websocket';
 
 const FullScreenWrapper = styled.div`
   width: 100%;

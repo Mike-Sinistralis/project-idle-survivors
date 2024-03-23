@@ -1,28 +1,41 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
+import { config } from 'dotenv';
+import http from 'http';
+import express from 'express';
+import cors from 'cors';
+import { Server as SocketIoServer } from 'socket.io';
+import gameRoutes from '#root/routes/game.js';
+
+config();
 
 const app = express();
 
-const server = http.createServer(app);
+app.use(cors({
+  // TODO: Change this when we are no longer just local
+  origin: '*',
+}));
 
-const io = socketIo(server, {
-  // https://socket.io/docs/v4/server-options
+app.use(express.json()); // Middleware to parse JSON bodies
+app.use('/game', gameRoutes); // Use game routes
+
+const httpServer = http.createServer(app);
+
+const io = new SocketIoServer(httpServer, {
+  cors: {
+    // TODO: Change this when we are no longer just local
+    origin: '*',
+  },
 });
 
-// Example of an Express route
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-// Handling a connection event for Socket.io
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  // Echo back "Hello World" whenever a message is received
-  socket.on('message', (msg) => {
-    console.log('message: ' + msg);
-    socket.emit('message', 'Hello World');
+  socket.on('connected', (msg) => {
+    console.log(`message: ${msg}`);
+    socket.emit('serverMessage', 'Hello World');
   });
 
   socket.on('disconnect', () => {
@@ -30,9 +43,8 @@ io.on('connection', (socket) => {
   });
 });
 
-// Setting the server to listen on a port
-const PORT = process.env.PORT || 3000;
+const { PORT } = process.env;
 
-server.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
