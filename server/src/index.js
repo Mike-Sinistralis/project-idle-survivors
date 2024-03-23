@@ -1,11 +1,10 @@
-import { config } from 'dotenv';
+import '#root/env-setup.js';
+
 import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import { Server as SocketIoServer } from 'socket.io';
 import gameRoutes from '#root/routes/game.js';
-
-config();
 
 const app = express();
 
@@ -44,7 +43,6 @@ io.on('connection', (socket) => {
 });
 
 const { PORT } = process.env;
-
 httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
