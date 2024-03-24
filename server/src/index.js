@@ -2,15 +2,25 @@ import '#root/env-setup.js';
 
 import http from 'http';
 import express from 'express';
+import session from 'express-session';
 import cors from 'cors';
 import { Server as SocketIoServer } from 'socket.io';
 import gameRoutes from '#root/routes/game.js';
 
 const app = express();
 
+const { SECRET } = process.env;
+app.use(session({
+  secret: SECRET, // A secret key used for signing the session ID cookie
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: true, // Save sessions that are new, but not modified
+  cookie: { secure: false, maxAge: 60000 }, // Use secure cookies, and set the max age (in ms)
+}));
+
 app.use(cors({
   // TODO: Change this when we are no longer just local
-  origin: '*',
+  origin: 'http://localhost:5173',
+  credentials: true,
 }));
 
 app.use(express.json()); // Middleware to parse JSON bodies
