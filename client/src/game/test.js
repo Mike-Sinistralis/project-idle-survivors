@@ -1,6 +1,5 @@
-// Make a 'GET' fetch call to localhost:3000/game/getSavedGame
 const fetchSavedGame = async () => {
-  const response = await fetch('http://localhost:3000/game/getSavedGame', {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/game/getSavedGame`, {
     credentials: 'include',
   });
   const data = await response.json();
@@ -16,7 +15,7 @@ const register = async (username, password) => {
     password,
   };
 
-  const response = await fetch('http://localhost:3000/game/register', {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/game/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -37,7 +36,7 @@ const login = async (username, password) => {
     password,
   };
 
-  const response = await fetch('http://localhost:3000/game/login', {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/game/login`, {
     method: 'POST',
     credentials: 'include',
     headers: {

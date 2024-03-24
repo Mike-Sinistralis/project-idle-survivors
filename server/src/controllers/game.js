@@ -3,7 +3,7 @@ import { pool } from '#root/db/pgClient.js';
 import Logger from '#root/logger.js';
 
 const getSavedGame = async (req, res) => {
-  console.log(req);
+  Logger.info(req);
   if (req.session.userID) {
     try {
       const { rows } = await pool.query('SELECT save FROM public.user WHERE "userID" = $1', [req.session.userID]);
@@ -14,11 +14,11 @@ const getSavedGame = async (req, res) => {
         res.send({ save: row.save });
       }
     } catch (error) {
-      console.log(error);
+      Logger.error(error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   } else {
-    console.log(req.session);
+    Logger.info(req.session);
     res.status(401).send('Not authenticated');
   }
 };
@@ -53,7 +53,7 @@ const login = async (req, res) => {
         res.status(401).send('Authentication failed');
       } else {
         req.session.userID = user.userID;
-        console.log(user, req.session);
+        Logger.info(user, req.session);
         req.session.save((err) => { // Force save session
           if (err) {
             res.status(500).send('Could not save session');
@@ -64,7 +64,7 @@ const login = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    Logger.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

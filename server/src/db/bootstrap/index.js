@@ -1,7 +1,8 @@
 import pg from 'pg';
 
 import Logger from '#root/logger.js';
-import { bootstrapHelloWorld } from './hello_world.js';
+import { bootstrapMigrationsLog } from './_migrations_log.js';
+import { bootstrapUsers } from './user.js';
 
 const { Pool } = pg;
 
@@ -40,7 +41,8 @@ const bootstrapDatabase = async () => {
       });
 
       // Bootstrap tables and data, 1 file per table
-      await bootstrapHelloWorld(idleSurvivorsPool);
+      await bootstrapMigrationsLog(idleSurvivorsPool);
+      await bootstrapUsers(idleSurvivorsPool);
 
       Logger.info('Database and table created successfully');
     } else {
