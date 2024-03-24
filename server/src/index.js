@@ -12,13 +12,11 @@ import Logger from '#root/logger.js';
 import { bootstrapDatabase } from '#root/db/bootstrap/index.js';
 import { pingDatabase } from '#root/db/pgClient.js';
 
-const { PORT } = process.env;
-
+const { PORT, SESSION_SECRET } = process.env;
 const app = express();
 
-const { SECRET } = process.env;
 app.use(session({
-  secret: SECRET, // A secret key used for signing the session ID cookie
+  secret: SESSION_SECRET, // A secret key used for signing the session ID cookie
   resave: false, // Don't save session if unmodified
   saveUninitialized: true, // Save sessions that are new, but not modified
   cookie: { secure: false, maxAge: 60000 }, // Use secure cookies, and set the max age (in ms)
