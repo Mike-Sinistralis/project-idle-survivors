@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
+    "module": "esnext",
+    "importHelpers": true,
+    "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
       "#root/*": ["./src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules"]
 }

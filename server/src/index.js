@@ -1,3 +1,4 @@
+// This has to be done first, do not move this
 import '#root/env-setup.js';
 
 import http from 'http';
@@ -5,7 +6,13 @@ import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import { Server as SocketIoServer } from 'socket.io';
+
 import gameRoutes from '#root/routes/game.js';
+import Logger from '#root/logger.js';
+import { bootstrapDatabase } from '#root/db/bootstrap/index.js';
+import { pingDatabase } from '#root/db/pgClient.js';
+
+const { PORT } = process.env;
 
 const app = express();
 
@@ -35,24 +42,27 @@ const io = new SocketIoServer(httpServer, {
   },
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  Logger.info('a user connected');
 
   socket.on('connected', (msg) => {
-    console.log(`message: ${msg}`);
+    Logger.debug(`message: ${msg}`);
     socket.emit('serverMessage', 'Hello World');
   });
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    Logger.info('user disconnected');
   });
 });
 
-const { PORT } = process.env;
-httpServer.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await bootstrapDatabase();
+    await pingDatabase();
+    app.listen(PORT, () => Logger.info(`Server running on port ${PORT}`));
+  } catch (error) {
+    Logger.error('Failed to start the server:', error);
+  }
+};
+
+startServer();

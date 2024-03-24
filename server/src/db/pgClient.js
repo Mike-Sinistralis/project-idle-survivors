@@ -1,5 +1,7 @@
 import pg from 'pg';
 
+import Logger from '#root/logger.js';
+
 const { Pool } = pg;
 
 const pool = new Pool({
@@ -8,8 +10,21 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: 5432,
-  max: 20,
+  port: process.env.DB_PORT || 5432,
+  max: process.env.DB_MAX_CONNECTIONS || 20,
 });
 
-export default pool;
+const pingDatabase = async () => {
+  try {
+    await pool.query('SELECT 1');
+    // If the query succeeds, the connection is good
+    Logger.info(`Successfully connected to ${process.env.DB_HOST}:${process.env.DB_PORT} as ${process.env.DB_USER}.`);
+    return true;
+  } catch (error) {
+    // If the query fails, log the error
+    Logger.error('Database connection failed.', error);
+    return false;
+  }
+};
+
+export { pool, pingDatabase };

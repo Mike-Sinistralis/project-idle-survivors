@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
-import pool from '#root/db/pgClient.js';
+import { pool } from '#root/db/pgClient.js';
+import Logger from '#root/logger.js';
 
 const getSavedGame = async (req, res) => {
   console.log(req);
@@ -34,7 +35,7 @@ const register = async (req, res) => {
     const { rows } = await pool.query('INSERT INTO public.user (username, password) VALUES ($1, $2)', [username, hashedPassword]);
     res.status(200).json(rows);
   } catch (error) {
-    console.log(error);
+    Logger.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
