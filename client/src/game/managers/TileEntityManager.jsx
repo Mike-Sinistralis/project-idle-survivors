@@ -15,6 +15,8 @@ function TileEntityManager({ width, height }) {
     window.unregisterEntity = unregisterEntity;
     window.updateEntity = updateEntity;
     window.getEntity = getEntity;
+
+    window.ENTITY_TYPES = ENTITY_TYPES;
   }, [entityList, getEntity, registerEntity, unregisterEntity, updateEntity]);
 
   useEffect(() => {
