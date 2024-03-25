@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import Player from 'game/player/Player';
-import SlimeWalk from 'game/sprites/slime/SlimeWalk';
+import Player from 'game/entities/player/Player';
+import Slime from 'game/entities/slime/Slime';
 import { create } from 'zustand';
 
 // Function that generates sequential ID's that loop back around after reaching 100k
@@ -21,7 +21,7 @@ const ENTITY_TYPES = {
 };
 
 const ENTITY_COMPONENTS = {
-  slime: SlimeWalk,
+  slime: Slime,
   player: Player,
 };
 

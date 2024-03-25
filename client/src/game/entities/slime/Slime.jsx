@@ -3,14 +3,14 @@ import {
   useCallback, useEffect,
 } from 'react';
 
-import { useSlime } from 'game/sprites/slime/useSlime';
+import { useSlime } from 'game/entities/slime/useSlime';
 import { useViewportOffset } from 'game/managers/hooks/useViewportOffset';
 import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
-import useRenderable, { RENDER_IDS } from '../hooks/useRenderable';
+import useRenderable, { RENDER_IDS } from '../../sprites/hooks/useRenderable';
 
 const offScreenMax = -80;
 
-function SlimeWalk({
+function Slime({
   id, stageWidth, stageHeight, ...props
 }) {
   const { getEntity } = useEntityManager();
@@ -99,4 +99,4 @@ function SlimeWalk({
   );
 }
 
-export default SlimeWalk;
+export default Slime;
