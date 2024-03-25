@@ -5,7 +5,7 @@ import { useEntityManager, ENTITY_TYPES, ENTITY_COMPONENTS } from './hooks/useTi
 
 function TileEntityManager({ width, height }) {
   const {
-    entityList, registerEntity, unregisterEntity, getEntity, version,
+    entityList, registerEntity, registerEntities, unregisterEntity, unregisterEntities, getEntity, version,
   } = useEntityManager();
 
   // For testing
@@ -14,37 +14,33 @@ function TileEntityManager({ width, height }) {
     window.registerEntity = registerEntity;
     window.unregisterEntity = unregisterEntity;
     window.getEntity = getEntity;
+    window.registerEntities = registerEntities;
+    window.unregisterEntities = unregisterEntities;
 
     window.ENTITY_TYPES = ENTITY_TYPES;
-  }, [entityList, getEntity, registerEntity, unregisterEntity]);
+  }, [entityList, getEntity, registerEntities, registerEntity, unregisterEntities, unregisterEntity]);
 
   useEffect(() => {
-    const initialIds = [];
     // In the future, the Scene or Biome or Level will be responsible for registering entities
-    const { id: playerId } = registerEntity(ENTITY_TYPES.PLAYER, {
+    const playerId = registerEntity(ENTITY_TYPES.PLAYER, {
       position: { x: 0, y: 0 },
       screenPosition: { x: width / 2, y: height / 2 },
       direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
     });
 
-    initialIds.push(playerId);
-
-    Array.from({ length: 5 }).forEach(() => {
-      const { id: slimeId } = registerEntity(ENTITY_TYPES.SLIME, {
+    const slimeIds = registerEntities(Array.from({ length: 10 }).map(() => ({
+      entityType: ENTITY_TYPES.SLIME,
+      entity: {
         position: { x: 0, y: 0 },
         screenPosition: { x: 0, y: 0 },
         direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-      });
-
-      initialIds.push(slimeId);
-    });
+      },
+    })));
 
     return () => {
-      initialIds.forEach((id) => {
-        unregisterEntity(id);
-      });
+      unregisterEntities([playerId, ...slimeIds]);
     };
-  }, [height, registerEntity, unregisterEntity, width]);
+  }, [height, registerEntities, registerEntity, unregisterEntities, width]);
 
   const entityComponents = useMemo(() => {
     const entitiesArray = Array.from(entityList.values());

@@ -47,7 +47,32 @@ const useEntityManager = create((set, get) => ({
     entityList.set(id, entity);
 
     set({ version: version + versionGenerator.next().value });
-    return entity;
+    return id;
+  },
+  registerEntities: (entities = []) => {
+    const { version, entityList } = get();
+    const entityIdList = [];
+
+    entities.forEach(({ entityType, entity }) => {
+      /*
+      * Get's an ID from generateId, ensures it isn't currently used, then registers the entity with that ID and returns the ID back to the caller
+      */
+      let id = idGenerator.next().value;
+
+      while (entityList.has(id)) {
+        id = idGenerator.next().value;
+      }
+
+      entity.type = entityType;
+      entity.id = id;
+
+      entityIdList.push(id);
+
+      entityList.set(id, entity);
+    });
+
+    set({ version: version + versionGenerator.next().value });
+    return entityIdList;
   },
   getEntity: (id) => {
     const { entityList } = get();
@@ -57,6 +82,15 @@ const useEntityManager = create((set, get) => ({
     const { version, entityList } = get();
 
     entityList.delete(id);
+
+    set({ version: version + versionGenerator.next().value });
+  },
+  unregisterEntities: (entityIds) => {
+    const { entityList, version } = get();
+
+    entityIds.forEach((id) => {
+      entityList.delete(id);
+    });
 
     set({ version: version + versionGenerator.next().value });
   },
