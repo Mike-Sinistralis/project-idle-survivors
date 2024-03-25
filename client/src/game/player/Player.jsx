@@ -1,9 +1,8 @@
 import { AnimatedSprite, useTick } from '@pixi/react';
 import { Texture, BaseTexture } from 'pixi.js';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { keyStore } from 'game/managers/hooks/useUserInput';
-import { usePrevious } from 'common/hooks/usePrevious';
 import PlayerSprite from 'assets/player.png';
 import useRenderable, { RENDER_IDS } from 'game/sprites/hooks/useRenderable';
 import { useViewportOffset } from 'game/managers/hooks/useViewportOffset';
@@ -17,11 +16,10 @@ frames.push(new Texture(baseTexture));
 function Player({
   id, stageWidth, stageHeight, ...props
 }) {
-  const { getEntity, updateEntity } = useEntityManager();
+  const { getEntity } = useEntityManager();
   usePlayer(id);
 
-  const { pressed, isPressed } = keyStore();
-  const previousPressed = usePrevious(pressed);
+  const { isPressed } = keyStore();
 
   const {
     textures,
@@ -35,14 +33,16 @@ function Player({
   const viewport = useViewportOffset();
   const [customScale, setCustomScale] = useState({ x: scale.x, y: scale.y });
 
+  const playerEntity = getEntity(id);
+
   const {
     position,
     screenPosition,
     direction,
     speed,
-  } = getEntity(id);
+  } = playerEntity;
 
-  useEffect(() => {
+  useTick(() => {
     const normalDirection = { x: 0, y: 0 };
 
     const inputMap = {
@@ -66,9 +66,8 @@ function Player({
     };
 
     updateScale(normalDirection);
-
-    updateEntity(id, { direction: normalDirection });
-  }, [isPressed, pressed, previousPressed, customScale, updateEntity, id]);
+    playerEntity.direction = normalDirection;
+  });
 
   useTick((delta) => {
     if (!speed) return;
@@ -78,7 +77,7 @@ function Player({
       y: position.y + direction.y * speed * delta,
     };
 
-    updateEntity(id, { position: newPos });
+    playerEntity.position = newPos;
     viewport.setOffset(newPos);
   });
 

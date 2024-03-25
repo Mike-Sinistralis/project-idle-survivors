@@ -5,7 +5,7 @@ import { useEntityManager, ENTITY_TYPES, ENTITY_COMPONENTS } from './hooks/useTi
 
 function TileEntityManager({ width, height }) {
   const {
-    entityList, registerEntity, unregisterEntity, updateEntity, getEntity,
+    entityList, registerEntity, unregisterEntity, getEntity,
   } = useEntityManager();
 
   // For testing
@@ -13,11 +13,10 @@ function TileEntityManager({ width, height }) {
     window.entityList = entityList;
     window.registerEntity = registerEntity;
     window.unregisterEntity = unregisterEntity;
-    window.updateEntity = updateEntity;
     window.getEntity = getEntity;
 
     window.ENTITY_TYPES = ENTITY_TYPES;
-  }, [entityList, getEntity, registerEntity, unregisterEntity, updateEntity]);
+  }, [entityList, getEntity, registerEntity, unregisterEntity]);
 
   useEffect(() => {
     const initialIds = [];
@@ -30,7 +29,7 @@ function TileEntityManager({ width, height }) {
 
     initialIds.push(playerId);
 
-    Array.from({ length: 1 }).forEach(() => {
+    Array.from({ length: 1000 }).forEach(() => {
       const { id: slimeId } = registerEntity(ENTITY_TYPES.SLIME, {
         position: { x: 0, y: 0 },
         screenPosition: { x: 0, y: 0 },

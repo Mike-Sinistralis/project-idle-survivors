@@ -8,19 +8,17 @@ const playerStore = create(() => ({
 
 const usePlayer = (id) => {
   const { baseSpeed } = playerStore();
-  const { getEntity, updateEntity } = useEntityManager();
+  const { getEntity } = useEntityManager();
 
-  const playerData = getEntity(id);
-  const { speed } = playerData;
+  const playerEntity = getEntity(id);
+  const { speed } = playerEntity;
 
   /*
     If the component this data is tied to mounts, initialize the entity data.
     Keep in mind this entity might have already been registered, but was culled, so check if it exists.
   */
   useEffect(() => {
-    updateEntity(id, {
-      speed: speed || (baseSpeed),
-    });
+    playerEntity.speed = speed || baseSpeed;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };

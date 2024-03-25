@@ -13,7 +13,7 @@ const offScreenMax = -80;
 function SlimeWalk({
   id, stageWidth, stageHeight, ...props
 }) {
-  const { getEntity, updateEntity } = useEntityManager();
+  const { getEntity } = useEntityManager();
 
   const { textures, spriteRef, ...renderableProps } = useRenderable({
     renderId: RENDER_IDS.SLIME,
@@ -21,13 +21,14 @@ function SlimeWalk({
 
   const viewport = useViewportOffset();
   const { onSlow } = useSlime(id);
+  const slimeEntity = getEntity(id);
 
   const {
     position,
     screenPosition,
     direction,
     speed,
-  } = getEntity(id);
+  } = slimeEntity;
 
   const handleSlimeClick = useCallback(() => {
     onSlow(1);
@@ -75,7 +76,9 @@ function SlimeWalk({
       newDirection = { x: direction.x, y: -direction.y };
     }
 
-    updateEntity(id, { position: newPos, screenPosition: newScreenPos, direction: newDirection || direction });
+    slimeEntity.position = newPos;
+    slimeEntity.screenPosition = newScreenPos;
+    slimeEntity.direction = newDirection || direction;
   });
 
   if (textures.length === 0) {

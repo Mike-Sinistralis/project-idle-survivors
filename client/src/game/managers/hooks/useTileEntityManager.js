@@ -56,12 +56,6 @@ const useEntityManager = create((set, get) => ({
     nextMap.delete(id);
     set({ entityList: nextMap });
   },
-  updateEntity: (id, entity) => {
-    const { entityList, getEntity } = get();
-    const existingEntity = getEntity(id);
-    entityList.set(id, { ...existingEntity, ...entity });
-    set({ entityList });
-  },
 }));
 
 export { useEntityManager, ENTITY_TYPES, ENTITY_COMPONENTS };

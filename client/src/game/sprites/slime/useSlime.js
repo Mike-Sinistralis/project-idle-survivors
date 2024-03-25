@@ -13,26 +13,24 @@ const slimeStore = create(() => ({
 const useSlime = (id) => {
   // Get the base stats for a Slime
   const { baseSpeed, baseHealth, getSpeedModifier } = slimeStore();
-  const { getEntity, updateEntity } = useEntityManager();
-  const slimeEntityData = getEntity(id);
-  const { health, speed } = slimeEntityData;
+  const { getEntity } = useEntityManager();
+  const slimeEntity = getEntity(id);
+  const { health, speed } = slimeEntity;
 
   /*
     If the component this data is tied to mounts, initialize the entity data.
     Keep in mind this entity might have already been registered, but was culled, so check if it exists.
   */
   useEffect(() => {
-    updateEntity(id, {
-      health: health || baseHealth,
-      speed: speed || (baseSpeed + getSpeedModifier()),
-    });
+    slimeEntity.speed = speed || baseSpeed + getSpeedModifier();
+    slimeEntity.health = health || baseHealth;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSlow = useCallback((slowAmount = 1) => {
-    const newSpeed = speed - slowAmount;
-    updateEntity(id, { speed: newSpeed });
-  }, [id, speed, updateEntity]);
+    const newSpeed = Math.max(speed - slowAmount, 0);
+    slimeEntity.speed = newSpeed;
+  }, [slimeEntity, speed]);
 
   return { onSlow };
 };
