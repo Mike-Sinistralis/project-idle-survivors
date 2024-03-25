@@ -1,11 +1,11 @@
-import { Container, useTick } from '@pixi/react';
+import { Container } from '@pixi/react';
 import { useEffect, useMemo } from 'react';
 
 import { useEntityManager, ENTITY_TYPES, ENTITY_COMPONENTS } from './hooks/useTileEntityManager';
 
 function TileEntityManager({ width, height }) {
   const {
-    entityList, registerEntity, unregisterEntity, getEntity,
+    entityList, registerEntity, unregisterEntity, getEntity, version,
   } = useEntityManager();
 
   // For testing
@@ -29,7 +29,7 @@ function TileEntityManager({ width, height }) {
 
     initialIds.push(playerId);
 
-    Array.from({ length: 1000 }).forEach(() => {
+    Array.from({ length: 5 }).forEach(() => {
       const { id: slimeId } = registerEntity(ENTITY_TYPES.SLIME, {
         position: { x: 0, y: 0 },
         screenPosition: { x: 0, y: 0 },
@@ -46,18 +46,14 @@ function TileEntityManager({ width, height }) {
     };
   }, [height, registerEntity, unregisterEntity, width]);
 
-  useTick((delta) => {
-
-  });
-
   const entityComponents = useMemo(() => {
     const entitiesArray = Array.from(entityList.values());
 
     return entitiesArray.map(({ type, id }) => {
       const Component = ENTITY_COMPONENTS[type];
-      return <Component key={id} stageWidth={width} stageHeight={height} id={id} />;
+      return <Component key={id} stageWidth={width} stageHeight={height} id={id} version={version} />;
     });
-  }, [entityList, width, height]);
+  }, [entityList, version, width, height]);
 
   return (
     <Container>

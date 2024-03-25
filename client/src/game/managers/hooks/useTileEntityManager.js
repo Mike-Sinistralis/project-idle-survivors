@@ -1,17 +1,19 @@
+/* eslint-disable no-param-reassign */
 import Player from 'game/player/Player';
 import SlimeWalk from 'game/sprites/slime/SlimeWalk';
 import { create } from 'zustand';
 
-// Function that generates sequential ID's that loop back around after reaching 1 million.
+// Function that generates sequential ID's that loop back around after reaching 100k
 function* generateId() {
   let id = 0;
   while (true) {
     yield id;
-    id = (id + 1) % 1000000;
+    id = (id + 1) % 100000;
   }
 }
 
 const idGenerator = generateId();
+const versionGenerator = generateId();
 
 const ENTITY_TYPES = {
   SLIME: 'slime',
@@ -26,35 +28,37 @@ const ENTITY_COMPONENTS = {
 // Global Context - Changes here affect all slimes
 const useEntityManager = create((set, get) => ({
   entityList: new Map([]),
+  // This is used to force updates to components when entity lists change.
+  version: 0,
   registerEntity: (entityType, entity = {}) => {
     /*
     * Get's an ID from generateId, ensures it isn't currently used, then registers the entity with that ID and returns the ID back to the caller
     */
     let id = idGenerator.next().value;
-    const { entityList } = get();
+    const { version, entityList } = get();
 
     while (entityList.has(id)) {
       id = idGenerator.next().value;
     }
 
-    const entityData = { type: entityType, id, ...entity };
+    entity.type = entityType;
+    entity.id = id;
 
-    const nextMap = new Map(entityList);
-    nextMap.set(id, entityData);
-    set({ entityList: nextMap });
+    entityList.set(id, entity);
 
-    return entityData;
+    set({ version: version + versionGenerator.next().value });
+    return entity;
   },
   getEntity: (id) => {
     const { entityList } = get();
     return entityList.get(id) || {};
   },
   unregisterEntity: (id) => {
-    const { entityList } = get();
-    const nextMap = new Map(entityList);
+    const { version, entityList } = get();
 
-    nextMap.delete(id);
-    set({ entityList: nextMap });
+    entityList.delete(id);
+
+    set({ version: version + versionGenerator.next().value });
   },
 }));
 
