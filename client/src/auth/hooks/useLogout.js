@@ -1,11 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
-import ApiError from 'errors/ApiError';
-import { toast } from 'react-toastify';
 
-const register = async ({
+import ApiError from 'errors/ApiError';
+import { useSessionKey } from 'auth/hooks/useSessionKey';
+
+const logout = async ({
   username, password,
-}) => fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
+}) => fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
   method: 'POST',
+  credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -26,20 +28,22 @@ const register = async ({
   };
 });
 
-const useRegister = () => {
+const useLogout = () => {
+  const { setSessionKey } = useSessionKey();
+
   const mutation = useMutation({
-    mutationFn: register,
+    mutationFn: logout,
     // eslint-disable-next-line no-unused-vars
     onError: (error, variables, context) => {
-      toast.error(error.responseData.error || 'Unable to create account');
+      setSessionKey(null);
     },
     // eslint-disable-next-line no-unused-vars
     onSuccess: (data, variables, context) => {
-      toast.success(`Created account ${variables.username} successfully. You can now log in.`);
+      setSessionKey(null);
     },
   });
 
   return mutation.mutate;
 };
 
-export { useRegister };
+export { useLogout };

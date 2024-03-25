@@ -5,7 +5,6 @@ import {
 
 import Game from 'game/index';
 import UserDetailsObserver from 'auth/components/UserDetailsObserver';
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function Providers() {
   return (

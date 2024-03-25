@@ -1,25 +1,23 @@
-import bcrypt from 'bcrypt';
-import { pool } from '#root/db/pgClient.js';
 import Logger from '#root/logger.js';
+import { getSaveByUserId } from '#root/managers/gameManager.js';
 
 const getSavedGame = async (req, res) => {
-  Logger.info(req);
-  if (req.session.userID) {
-    try {
-      const { rows } = await pool.query('SELECT save FROM public.user WHERE "userID" = $1', [req.session.userID]);
-      if (rows.length !== 1) {
-        res.status(500).json({ error: 'Internal Server Error' });
-      } else {
-        const row = rows[0];
-        res.send({ save: row.save });
-      }
-    } catch (error) {
-      Logger.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  } else {
-    Logger.info(req.session);
+  if (!req.session.userID) {
     res.status(401).send({ error: 'Not authenticated' });
+    return;
+  }
+
+  try {
+    const saveFile = getSaveByUserId(req.session.userID);
+    if (!saveFile) {
+      res.status(500).json({ error: 'Internal Server Error' });
+      return;
+    }
+
+    res.send({ save: saveFile.save });
+  } catch (error) {
+    Logger.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -27,86 +25,7 @@ const saveGame = async (req, res) => {
   res.status(500).json({ error: 'Not implemented yet dumdum' });
 };
 
-const register = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    await pool.query('INSERT INTO public.user (username, password) VALUES ($1, $2)', [username, hashedPassword]);
-    res.status(200).json({ message: 'User created', usename: username });
-  } catch (error) {
-    Logger.error(error);
-    res.status(500).json({ error: 'User either exists or encounted an unknown error' });
-  }
-};
-
-const login = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const userResult = await pool.query('SELECT "userID", username, password FROM public.user WHERE username = $1', [username]);
-    if (userResult.rows.length === 0) {
-      res.status(401).send({ error: 'Authentication failed' });
-    } else {
-      const user = userResult.rows[0];
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        res.status(401).send({ error: 'Authentication failed' });
-      } else {
-        req.session.userID = user.userID;
-        Logger.info(user, req.session);
-        req.session.save((err) => { // Force save session
-          if (err) {
-            res.status(500).send({ error: 'Could not save session' });
-          } else {
-            res.send({ sessionKey: req.sessionID });
-          }
-        });
-      }
-    }
-  } catch (error) {
-    Logger.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-const getUserDetails = async (req, res) => {
-  if (req.session.userID) {
-    try {
-      const { rows } = await pool.query('SELECT * FROM public.user WHERE "userID" = $1', [req.session.userID]);
-      if (rows.length !== 1) {
-        req.session.destroy();
-        res.status(500).json({ error: 'No user found for session' });
-      } else {
-        const { userID, username, save } = rows[0];
-        res.send({
-          message: 'User session has been refreshed', user: { userID, username, save },
-        });
-      }
-    } catch (error) {
-      Logger.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  } else {
-    res.status(401).send({ error: 'Not authenticated' });
-  }
-};
-
-const logout = async (req, res) => {
-  req.session?.destroy?.();
-  res.send({ message: 'Logged out' });
-};
-
-/*
-  TODO: Get User Details
-  - This should return the latest state for the user
-  - This should refresh the expiration of the session
-*/
-
 export {
   getSavedGame,
   saveGame,
-  register,
-  login,
-  getUserDetails,
-  logout,
 };

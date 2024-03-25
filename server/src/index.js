@@ -8,10 +8,13 @@ import cors from 'cors';
 import { Server as SocketIoServer } from 'socket.io';
 import sharedsession from 'express-socket.io-session';
 
-import gameRoutes from '#root/routes/game.js';
 import Logger from '#root/logger.js';
 import { bootstrapDatabase } from '#root/db/bootstrap/index.js';
 import { pingDatabase } from '#root/db/pgClient.js';
+
+import authRoutes from '#root/routes/auth.js';
+import gameRoutes from '#root/routes/game.js';
+import userRoutes from '#root/routes/user.js';
 
 const { PORT, SESSION_SECRET, CORS_ORIGIN } = process.env;
 const app = express();
@@ -33,7 +36,10 @@ app.use(cors({
 }));
 
 app.use(express.json()); // Middleware to parse JSON bodies
-app.use('/game', gameRoutes); // Use game routes
+
+app.use('/auth', authRoutes);
+app.use('/game', gameRoutes);
+app.use('/user', userRoutes);
 
 const httpServer = http.createServer(app);
 

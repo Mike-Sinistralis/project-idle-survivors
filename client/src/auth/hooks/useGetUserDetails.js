@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useSessionKey } from './useSessionKey';
 
 const getUserDetails = async () => {
-  const response = await fetch(`${import.meta.env.VITE_API_URL}/game/getUserDetails`, {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/user/getUserDetails`, {
     method: 'GET',
     credentials: 'include',
     headers: {

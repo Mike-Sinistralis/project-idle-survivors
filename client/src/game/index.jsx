@@ -7,6 +7,7 @@ import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
 import { useSessionKey } from 'auth/hooks/useSessionKey';
 import 'game/websocket';
+import { useLogout } from 'auth/hooks/useLogout';
 import TileEntityManager from './managers/TileEntityManager';
 
 const FullScreenWrapper = styled.div`
@@ -44,7 +45,7 @@ function View({ stageProps }) {
 }
 
 function Model() {
-  const { setSessionKey } = useSessionKey();
+  const doLogout = useLogout();
 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
@@ -72,18 +73,7 @@ function Model() {
     },
   }), [windowSize]);
 
-  const logout = async () => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/game/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    });
-
-    const data = await response.json();
-
-    setSessionKey(null);
-
-    return data;
-  };
+  const logout = async () => doLogout();
 
   window.logout = logout;
 

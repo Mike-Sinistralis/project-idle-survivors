@@ -5,7 +5,7 @@ import { useSessionKey } from './useSessionKey';
 
 const login = async ({
   username, password,
-}) => fetch(`${import.meta.env.VITE_API_URL}/game/login`, {
+}) => fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
   method: 'POST',
   credentials: 'include',
   headers: {
@@ -45,7 +45,7 @@ const useLogin = () => {
     },
   });
 
-  return mutation;
+  return mutation.mutate;
 };
 
 export { useLogin };

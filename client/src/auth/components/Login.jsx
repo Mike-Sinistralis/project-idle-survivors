@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -56,23 +56,38 @@ function Model() {
   const doLogin = useLogin();
   const doRegister = useRegister();
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     const { username, password } = serializeFormData(formRef.current);
 
-    doLogin.mutate({
+    doLogin({
       username,
       password,
     });
-  };
+  }, [doLogin]);
 
-  const handleRegister = () => {
+  const handleRegister = useCallback(() => {
     const { username, password } = serializeFormData(formRef.current);
 
-    doRegister.mutate({
+    doRegister({
       username,
       password,
     });
-  };
+  }, [doRegister]);
+
+  useEffect(() => {
+    // listen for enter key press and handle login
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        handleLogin();
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyPress);
+
+    return () => {
+      window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [handleLogin]);
 
   const hookProps = {
     handleLogin,
