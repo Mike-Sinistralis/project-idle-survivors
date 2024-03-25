@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
+import { useCallback, useEffect } from 'react';
 import { create } from 'zustand';
 
 // Global Context - Changes here affect all slimes
@@ -9,36 +10,31 @@ const slimeStore = create(() => ({
 }));
 
 // Instance Context - Changes here affect individual slimes
-const useSlime = () => {
+const useSlime = (id) => {
   // Get the base stats for a Slime
   const { baseSpeed, baseHealth, getSpeedModifier } = slimeStore();
+  const { getEntity, updateEntity } = useEntityManager();
+  const slimeEntityData = getEntity(id);
+  const { health, speed } = slimeEntityData;
 
-  // Implement those stats for this Slime, plus any individual randomness.
-  const [stats, setStats] = useState({
-    health: baseHealth,
-    speed: baseSpeed + getSpeedModifier(),
-  });
-
-  // This could probably live in a "useEntity" or "useDamagable" hook that had generic logic.
-  const onDamaged = useCallback((damage) => {
-    setStats((prev) => ({ ...prev, health: prev.health - damage }));
+  /*
+    If the component this data is tied to mounts, initialize the entity data.
+    Keep in mind this entity might have already been registered, but was culled, so check if it exists.
+  */
+  useEffect(() => {
+    updateEntity(id, {
+      health: health || baseHealth,
+      speed: speed || (baseSpeed + getSpeedModifier()),
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSlow = useCallback((slowAmount = 1) => {
-    setStats((prev) => {
-      const newSpeed = prev.speed - slowAmount;
-      return { ...prev, speed: newSpeed < 0 ? 0 : newSpeed };
-    });
-  }, []);
+    const newSpeed = speed - slowAmount;
+    updateEntity(id, { speed: newSpeed });
+  }, [id, speed, updateEntity]);
 
-  useEffect(() => {
-    if (stats.health <= 0) {
-      console.log('Slime is dead');
-      // kill slime
-    }
-  }, [stats.health]);
-
-  return { stats, onSlow, onDamaged };
+  return { onSlow };
 };
 
 export { useSlime };

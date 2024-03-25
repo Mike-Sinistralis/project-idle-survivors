@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
+import { useEffect } from 'react';
 import { create } from 'zustand';
 
-// Global Context - Changes here affect all slimes
 const playerStore = create(() => ({
   baseSpeed: 10,
 }));
 
-// Instance Context - Changes here affect individual slimes
-const usePlayer = () => {
-  // Get the base stats for a Slime
+const usePlayer = (id) => {
   const { baseSpeed } = playerStore();
+  const { getEntity, updateEntity } = useEntityManager();
 
-  const [stats, setStats] = useState({
-    speed: baseSpeed,
-  });
+  const playerData = getEntity(id);
+  const { speed } = playerData;
 
-  return { stats, setStats };
+  /*
+    If the component this data is tied to mounts, initialize the entity data.
+    Keep in mind this entity might have already been registered, but was culled, so check if it exists.
+  */
+  useEffect(() => {
+    updateEntity(id, {
+      speed: speed || (baseSpeed),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 };
 
 export { usePlayer };

@@ -2,14 +2,12 @@ import { Stage } from '@pixi/react';
 import { useMemo, useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 
-import SlimeWalk from 'game/sprites/slime/SlimeWalk';
 import Grassland from 'game/sprites/settings/Grassland';
 import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
 import { useSessionKey } from 'auth/hooks/useSessionKey';
-import Player from './player/Player';
 import 'game/websocket';
-import 'game/test';
+import TileEntityManager from './managers/TileEntityManager';
 
 const FullScreenWrapper = styled.div`
   width: 100%;
@@ -27,14 +25,19 @@ function View({ stageProps }) {
   return (
     <FullScreenWrapper>
       <Stage {...stageProps}>
+        {/*
+          <SceneManager /> - Handles Backgrounds, Tilemaps, anything visual that isn't a tile entity
+          <NetworkManager /> - Player presence, etc. No collision detection. Maybe movement
+          <UIManager /> - Chat, Inventory, etc.
+          <SoundManager /> - Sound effects, music, etc.
+          <ParticleManager /> - Particles, spell/skill effects etc.
+        */}
         <UserInputManager />
         <Grassland />
         <Desert />
-        {Array.from({ length: 10 }).map((_, i) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <SlimeWalk key={i} stageWidth={stageProps.width} stageHeight={stageProps.height} />
-        ))}
-        <Player stageWidth={stageProps.width} stageHeight={stageProps.height} />
+        <TileEntityManager
+          {...stageProps}
+        />
       </Stage>
     </FullScreenWrapper>
   );

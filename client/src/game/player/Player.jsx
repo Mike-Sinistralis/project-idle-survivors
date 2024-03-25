@@ -7,13 +7,19 @@ import { usePrevious } from 'common/hooks/usePrevious';
 import PlayerSprite from 'assets/player.png';
 import useRenderable, { RENDER_IDS } from 'game/sprites/hooks/useRenderable';
 import { useViewportOffset } from 'game/managers/hooks/useViewportOffset';
+import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
 import { usePlayer } from './hooks/usePlayer';
 
 const baseTexture = BaseTexture.from(PlayerSprite);
 const frames = [];
 frames.push(new Texture(baseTexture));
 
-function Player({ stageWidth, stageHeight, ...props }) {
+function Player({
+  id, stageWidth, stageHeight, ...props
+}) {
+  const { getEntity, updateEntity } = useEntityManager();
+  usePlayer(id);
+
   const { pressed, isPressed } = keyStore();
   const previousPressed = usePrevious(pressed);
 
@@ -27,13 +33,14 @@ function Player({ stageWidth, stageHeight, ...props }) {
   });
 
   const viewport = useViewportOffset();
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [screenPosition] = useState({ x: stageWidth / 2, y: stageHeight / 2 });
   const [customScale, setCustomScale] = useState({ x: scale.x, y: scale.y });
-  const [direction, setDirection] = useState({ x: 0, y: 0 });
 
-  const { stats } = usePlayer();
-  const { speed } = stats;
+  const {
+    position,
+    screenPosition,
+    direction,
+    speed,
+  } = getEntity(id);
 
   useEffect(() => {
     const normalDirection = { x: 0, y: 0 };
@@ -59,17 +66,19 @@ function Player({ stageWidth, stageHeight, ...props }) {
     };
 
     updateScale(normalDirection);
-    setDirection(normalDirection);
-  }, [isPressed, pressed, previousPressed, customScale]);
+
+    updateEntity(id, { direction: normalDirection });
+  }, [isPressed, pressed, previousPressed, customScale, updateEntity, id]);
 
   useTick((delta) => {
+    if (!speed) return;
     // Update position based on direction and delta time
     const newPos = {
       x: position.x + direction.x * speed * delta,
       y: position.y + direction.y * speed * delta,
     };
 
-    setPosition(newPos);
+    updateEntity(id, { position: newPos });
     viewport.setOffset(newPos);
   });
 

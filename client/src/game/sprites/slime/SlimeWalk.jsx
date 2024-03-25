@@ -1,24 +1,33 @@
 import { AnimatedSprite, useTick } from '@pixi/react';
 import {
-  useCallback, useEffect, useState,
+  useCallback, useEffect,
 } from 'react';
+
 import { useSlime } from 'game/sprites/slime/useSlime';
 import { useViewportOffset } from 'game/managers/hooks/useViewportOffset';
+import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
 import useRenderable, { RENDER_IDS } from '../hooks/useRenderable';
 
 const offScreenMax = -80;
 
-function SlimeWalk({ stageWidth, stageHeight, ...props }) {
+function SlimeWalk({
+  id, stageWidth, stageHeight, ...props
+}) {
+  const { getEntity, updateEntity } = useEntityManager();
+
   const { textures, spriteRef, ...renderableProps } = useRenderable({
     renderId: RENDER_IDS.SLIME,
   });
 
   const viewport = useViewportOffset();
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [screenPosition, setScreenPosition] = useState({ x: 0, y: 0 });
-  const [direction, setDirection] = useState({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 });
-  const { stats, onSlow } = useSlime();
-  const { speed } = stats;
+  const { onSlow } = useSlime(id);
+
+  const {
+    position,
+    screenPosition,
+    direction,
+    speed,
+  } = getEntity(id);
 
   const handleSlimeClick = useCallback(() => {
     onSlow(1);
@@ -42,6 +51,8 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
   }, [handleSlimeClick, spriteRef, textures]);
 
   useTick((delta) => {
+    if (!speed) return;
+
     // Update position based on direction and delta time
     const newPos = {
       x: position.x + direction.x * speed * delta,
@@ -53,16 +64,18 @@ function SlimeWalk({ stageWidth, stageHeight, ...props }) {
       y: (stageHeight / 2) - viewport.offset.y + position.y,
     };
 
+    let newDirection;
+
     // Boundary checks and update direction if out of bounds
     if ((newScreenPos.x < offScreenMax && direction.x < 0) || (newScreenPos.x > stageWidth && direction.x > 0)) {
-      setDirection((prev) => ({ ...prev, x: -prev.x }));
-    }
-    if ((newScreenPos.y < offScreenMax && direction.y < 0) || (newScreenPos.y > stageHeight && direction.y > 0)) {
-      setDirection((prev) => ({ ...prev, y: -prev.y }));
+      newDirection = { x: -direction.x, y: direction.y };
     }
 
-    setPosition(newPos);
-    setScreenPosition(newScreenPos);
+    if ((newScreenPos.y < offScreenMax && direction.y < 0) || (newScreenPos.y > stageHeight && direction.y > 0)) {
+      newDirection = { x: direction.x, y: -direction.y };
+    }
+
+    updateEntity(id, { position: newPos, screenPosition: newScreenPos, direction: newDirection || direction });
   });
 
   if (textures.length === 0) {
