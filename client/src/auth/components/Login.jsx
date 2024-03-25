@@ -68,8 +68,6 @@ function Model() {
   const handleRegister = () => {
     const { username, password } = serializeFormData(formRef.current);
 
-    debugger;
-
     doRegister.mutate({
       username,
       password,
