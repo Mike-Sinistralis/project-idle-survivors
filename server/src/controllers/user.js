@@ -8,7 +8,7 @@ const getUserDetails = async (req, res) => {
   }
 
   try {
-    const user = getUserById(req.session.userID);
+    const user = await getUserById(req.session.userID);
 
     if (!user) {
       req.session.destroy();

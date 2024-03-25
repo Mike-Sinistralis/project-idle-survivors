@@ -25,12 +25,20 @@ const ENTITY_COMPONENTS = {
   player: Player,
 };
 
-// Global Context - Changes here affect all slimes
 const useEntityManager = create((set, get) => ({
+  player: null,
   entityList: new Map([]),
   entityIds: new Set([]),
   // This is used to force updates to components when entity lists change.
   version: 0,
+  registerPlayer: (entity = {}) => {
+    const { version } = get();
+
+    entity.type = ENTITY_TYPES.PLAYER;
+    entity.id = 'player';
+
+    set({ version: version + versionGenerator.next().value, player: entity });
+  },
   registerEntity: (entityType, entity = {}) => {
     /*
     * Get's an ID from generateId, ensures it isn't currently used, then registers the entity with that ID and returns the ID back to the caller
@@ -81,6 +89,16 @@ const useEntityManager = create((set, get) => ({
     const { entityList } = get();
 
     return entityList.get(id) || {};
+  },
+  getPlayer: () => {
+    const { player } = get();
+
+    return player;
+  },
+  unregisterPlayer: () => {
+    const { version } = get();
+
+    set({ version: version + versionGenerator.next().value, player: null });
   },
   unregisterEntity: (id) => {
     const { version, entityList, entityIds } = get();

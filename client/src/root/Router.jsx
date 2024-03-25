@@ -1,16 +1,16 @@
 import { useSessionKey } from 'auth/hooks/useSessionKey';
-import PrivateRoutes from 'root/PrivateRoutes';
-import PublicRoutes from 'root/PublicRoutes';
+import Private from 'root/PrivateRoutes';
+import Public from 'root/PublicRoutes';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 function Providers({ isAuthenticated }) {
   return (
     <>
       {isAuthenticated && (
-        <PrivateRoutes />
+        <Private />
       )}
       {!isAuthenticated && (
-        <PublicRoutes />
+        <Public />
       )}
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </>

@@ -1,4 +1,4 @@
-import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
+/* eslint-disable no-param-reassign */
 import { useCallback, useEffect } from 'react';
 import { create } from 'zustand';
 
@@ -7,15 +7,25 @@ const slimeStore = create(() => ({
   baseSpeed: 5,
   baseHealth: 100,
   getSpeedModifier: () => Math.floor(Math.random() * 4),
+  handleEntityCollide: (slime, entity) => {
+    const { id: entityId, type } = entity;
+
+    console.log(`Slime collided with entity ${entityId || 'Player'} of type ${type} at position ${slime.position.x}, ${slime.position.y}!`);
+  },
 }));
 
 // Instance Context - Changes here affect individual slimes
-const useSlime = (id) => {
+const useSlime = (getEntity, id) => {
   // Get the base stats for a Slime
-  const { baseSpeed, baseHealth, getSpeedModifier } = slimeStore();
-  const { getEntity } = useEntityManager();
+  const {
+    baseSpeed, baseHealth, getSpeedModifier, handleEntityCollide,
+  } = slimeStore();
+
   const slimeEntity = getEntity(id);
-  const { health, speed, collisionRadius } = slimeEntity;
+
+  const {
+    health, speed, collisionRadius, onCollide,
+  } = slimeEntity;
 
   /*
     If the component this data is tied to mounts, initialize the entity data.
@@ -24,7 +34,8 @@ const useSlime = (id) => {
   useEffect(() => {
     slimeEntity.speed = speed || baseSpeed + getSpeedModifier();
     slimeEntity.health = health || baseHealth;
-    slimeEntity.collisionRadius = collisionRadius || 20;
+    slimeEntity.collisionRadius = collisionRadius || 10;
+    slimeEntity.onCollide = onCollide || handleEntityCollide;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

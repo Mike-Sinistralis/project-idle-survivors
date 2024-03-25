@@ -5,29 +5,34 @@ import {
 
 import Game from 'game/index';
 import UserDetailsObserver from 'auth/components/UserDetailsObserver';
+import { useGetUserDetails } from 'auth/hooks/useGetUserDetails';
 
-function Providers() {
+function PrivateRoutes({ isIdentified }) {
   return (
     <>
       <UserDetailsObserver />
       <Routes>
-        <Route path="/" element={<Game />} />
+        {isIdentified && (
+          <Route path="/" element={<Game />} />
+        )}
       </Routes>
     </>
   );
 }
 
 function Model() {
-  const hookProps = {
+  const { userID } = useGetUserDetails();
 
+  const hookProps = {
+    isIdentified: !!userID,
   };
 
   return (
-    <Providers
+    <PrivateRoutes
       {...hookProps}
     />
   );
 }
 
 export default Model;
-export { Providers };
+export { PrivateRoutes };

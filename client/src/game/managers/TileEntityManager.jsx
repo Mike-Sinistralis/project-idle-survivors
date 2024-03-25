@@ -11,9 +11,21 @@ function isColliding(entityA, entityB) {
   return distance < (entityA.collisionRadius + entityB.collisionRadius);
 }
 
+let didInit = false;
+
 function TileEntityManager({ width, height }) {
   const {
-    entityList, entityIds, registerEntity, registerEntities, unregisterEntity, unregisterEntities, getEntity, version,
+    entityList,
+    entityIds,
+    registerEntity,
+    registerEntities,
+    unregisterEntity,
+    unregisterEntities,
+    getEntity,
+    getPlayer,
+    version,
+    registerPlayer,
+    unregisterPlayer,
   } = useEntityManager();
 
   // For testing
@@ -24,19 +36,23 @@ function TileEntityManager({ width, height }) {
     window.getEntity = getEntity;
     window.registerEntities = registerEntities;
     window.unregisterEntities = unregisterEntities;
+    window.getPlayer = getPlayer;
+    window.registerPlayer = registerPlayer;
+    window.unregisterPlayer = unregisterPlayer;
 
     window.ENTITY_TYPES = ENTITY_TYPES;
-  }, [entityList, getEntity, registerEntities, registerEntity, unregisterEntities, unregisterEntity]);
+  }, [entityList, getEntity, getPlayer, registerEntities, registerEntity, registerPlayer, unregisterEntities, unregisterEntity, unregisterPlayer]);
 
   useEffect(() => {
+    if (didInit) return;
     // In the future, the Scene or Biome or Level will be responsible for registering entities
-    const playerId = registerEntity(ENTITY_TYPES.PLAYER, {
+    registerPlayer({
       position: { x: 0, y: 0 },
       screenPosition: { x: width / 2, y: height / 2 },
       direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
     });
 
-    const slimeIds = registerEntities(Array.from({ length: 10 }).map(() => ({
+    registerEntities(Array.from({ length: 5 }).map(() => ({
       entityType: ENTITY_TYPES.SLIME,
       entity: {
         position: { x: 0, y: 0 },
@@ -45,38 +61,45 @@ function TileEntityManager({ width, height }) {
       },
     })));
 
-    return () => {
-      unregisterEntities([playerId, ...slimeIds]);
-    };
-  }, [height, registerEntities, registerEntity, unregisterEntities, width]);
+    didInit = true;
+  }, [height, registerEntities, registerPlayer, unregisterEntities, unregisterPlayer, width]);
 
-  // I'm sure Delta will be useful later for things like rapid damage applications
+  /*
+    Entities collide with the player by either running into them, or an effect owned by the enemy collides with the player
+
+    The player collides with the entities specifically through effects only, though a mechanic like Thorns might be relevant
+    and should be handled in the onCollide function.
+  */
   useTick((delta) => {
-    const processed = new Set();
+    const player = getPlayer();
+
+    if (!player) return;
 
     entityIds.forEach((idA) => {
       const entityA = getEntity(idA);
-      processed.add(idA); // Mark this ID as processed
 
-      entityIds.forEach((idB) => {
-        if (!processed.has(idB)) {
-          const entityB = getEntity(idB);
-          if (isColliding(entityA, entityB)) {
-            console.log(`Entity ${idA} of type ${entityA.type} is colliding with ${idB} of type ${entityB.type}!`);
-          }
-        }
-      });
+      if (isColliding(entityA, player)) {
+        entityA?.onCollide(entityA, player);
+        player?.onCollide(player, entityA);
+      }
     });
   });
 
   const entityComponents = useMemo(() => {
     const entitiesArray = Array.from(entityList.values());
+    const player = getPlayer();
+
+    if (player) {
+      entitiesArray.push(player);
+    }
+
+    if (!entitiesArray.length) return false;
 
     return entitiesArray.map(({ type, id }) => {
       const Component = ENTITY_COMPONENTS[type];
       return <Component key={id} stageWidth={width} stageHeight={height} id={id} version={version} />;
     });
-  }, [entityList, version, width, height]);
+  }, [entityList, getPlayer, width, height, version]);
 
   return (
     <Container>

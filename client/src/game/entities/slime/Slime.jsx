@@ -14,14 +14,14 @@ function Slime({
   id, stageWidth, stageHeight, ...props
 }) {
   const { getEntity } = useEntityManager();
+  const slimeEntity = getEntity(id);
+  const { onSlow } = useSlime(getEntity, id);
 
   const { textures, spriteRef, ...renderableProps } = useRenderable({
     renderId: RENDER_IDS.SLIME,
   });
 
   const viewport = useViewportOffset();
-  const { onSlow } = useSlime(id);
-  const slimeEntity = getEntity(id);
 
   const {
     position,

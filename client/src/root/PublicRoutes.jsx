@@ -5,7 +5,7 @@ import {
 
 import Login from 'auth/components/Login';
 
-function Providers() {
+function PublicRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
@@ -19,11 +19,11 @@ function Model() {
   };
 
   return (
-    <Providers
+    <PublicRoutes
       {...hookProps}
     />
   );
 }
 
 export default Model;
-export { Providers };
+export { PublicRoutes };

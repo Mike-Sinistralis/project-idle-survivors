@@ -14,10 +14,12 @@ const frames = [];
 frames.push(new Texture(baseTexture));
 
 function Player({
-  id, stageWidth, stageHeight, ...props
+  stageWidth, stageHeight, ...props
 }) {
-  const { getEntity } = useEntityManager();
-  usePlayer(id);
+  const { getPlayer } = useEntityManager();
+  const playerEntity = getPlayer();
+
+  usePlayer(getPlayer);
 
   const { isPressed } = keyStore();
 
@@ -32,8 +34,6 @@ function Player({
 
   const viewport = useViewportOffset();
   const [customScale, setCustomScale] = useState({ x: scale.x, y: scale.y });
-
-  const playerEntity = getEntity(id);
 
   const {
     position,

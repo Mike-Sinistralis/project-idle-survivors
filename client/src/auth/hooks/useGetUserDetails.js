@@ -37,5 +37,5 @@ export function useGetUserDetails() {
     enabled: !!sessionKey,
   });
 
-  return query?.data?.responseData.user || { ids: [], data: {} };
+  return query?.data?.responseData.user || {};
 }
