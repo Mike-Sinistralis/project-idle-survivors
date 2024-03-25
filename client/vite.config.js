@@ -13,9 +13,13 @@ export default defineConfig({
   resolve: {
     alias: {
       assets: '/src/assets',
+      auth: '/src/auth',
       common: '/src/common',
+      const: '/src/const',
+      errors: '/src/errors',
       game: '/src/game',
       root: '/src/root',
+      util: '/src/util',
     },
   },
 });

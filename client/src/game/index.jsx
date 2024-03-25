@@ -6,6 +6,7 @@ import SlimeWalk from 'game/sprites/slime/SlimeWalk';
 import Grassland from 'game/sprites/settings/Grassland';
 import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
+import { useSessionKey } from 'auth/hooks/useSessionKey';
 import Player from './player/Player';
 import 'game/websocket';
 import 'game/test';
@@ -40,6 +41,8 @@ function View({ stageProps }) {
 }
 
 function Model() {
+  const { setSessionKey } = useSessionKey();
+
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -65,6 +68,21 @@ function Model() {
       antialias: true,
     },
   }), [windowSize]);
+
+  const logout = async () => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/game/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    const data = await response.json();
+
+    setSessionKey(null);
+
+    return data;
+  };
+
+  window.logout = logout;
 
   const hookProps = {
     stageProps,

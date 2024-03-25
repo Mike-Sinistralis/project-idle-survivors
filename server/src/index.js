@@ -20,7 +20,8 @@ const expressSession = session({
   secret: SESSION_SECRET, // A secret key used for signing the session ID cookie
   resave: false, // Don't save session if unmodified
   saveUninitialized: true, // Save sessions that are new, but not modified
-  cookie: { secure: false, maxAge: 60000 }, // Use secure cookies, and set the max age (in ms)
+  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // Use secure cookies, and set the max age (in ms)
+  rolling: true,
 });
 
 app.use(expressSession);

@@ -1,20 +1,35 @@
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-} from 'react-router-dom';
+import { useSessionKey } from 'auth/hooks/useSessionKey';
+import PrivateRoutes from 'root/PrivateRoutes';
+import PublicRoutes from 'root/PublicRoutes';
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import Game from 'game/index';
-
-// This should route to layouts based on the URL path or other app factors. The Layout folder will contain the sub-routing structure for individual layouts.
-function Providers() {
+function Providers({ isAuthenticated }) {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Game />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      {isAuthenticated && (
+        <PrivateRoutes />
+      )}
+      {!isAuthenticated && (
+        <PublicRoutes />
+      )}
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+    </>
   );
 }
 
-export default Providers;
+function Model() {
+  const { sessionKey } = useSessionKey();
+
+  const hookProps = {
+    isAuthenticated: Boolean(sessionKey),
+  };
+
+  return (
+    <Providers
+      {...hookProps}
+    />
+  );
+}
+
+export default Model;
+export { Providers };
