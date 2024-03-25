@@ -1,11 +1,19 @@
-import { Container } from '@pixi/react';
+import { Container, useTick } from '@pixi/react';
 import { useEffect, useMemo } from 'react';
 
 import { useEntityManager, ENTITY_TYPES, ENTITY_COMPONENTS } from './hooks/useTileEntityManager';
 
+function isColliding(entityA, entityB) {
+  const dx = entityA.position.x - entityB.position.x;
+  const dy = entityA.position.y - entityB.position.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  return distance < (entityA.collisionRadius + entityB.collisionRadius);
+}
+
 function TileEntityManager({ width, height }) {
   const {
-    entityList, registerEntity, registerEntities, unregisterEntity, unregisterEntities, getEntity, version,
+    entityList, entityIds, registerEntity, registerEntities, unregisterEntity, unregisterEntities, getEntity, version,
   } = useEntityManager();
 
   // For testing
@@ -41,6 +49,25 @@ function TileEntityManager({ width, height }) {
       unregisterEntities([playerId, ...slimeIds]);
     };
   }, [height, registerEntities, registerEntity, unregisterEntities, width]);
+
+  // I'm sure Delta will be useful later for things like rapid damage applications
+  useTick((delta) => {
+    const processed = new Set();
+
+    entityIds.forEach((idA) => {
+      const entityA = getEntity(idA);
+      processed.add(idA); // Mark this ID as processed
+
+      entityIds.forEach((idB) => {
+        if (!processed.has(idB)) {
+          const entityB = getEntity(idB);
+          if (isColliding(entityA, entityB)) {
+            console.log(`Entity ${idA} of type ${entityA.type} is colliding with ${idB} of type ${entityB.type}!`);
+          }
+        }
+      });
+    });
+  });
 
   const entityComponents = useMemo(() => {
     const entitiesArray = Array.from(entityList.values());

@@ -11,7 +11,7 @@ const usePlayer = (id) => {
   const { getEntity } = useEntityManager();
 
   const playerEntity = getEntity(id);
-  const { speed } = playerEntity;
+  const { speed, collisionRadius } = playerEntity;
 
   /*
     If the component this data is tied to mounts, initialize the entity data.
@@ -19,6 +19,7 @@ const usePlayer = (id) => {
   */
   useEffect(() => {
     playerEntity.speed = speed || baseSpeed;
+    playerEntity.collisionRadius = collisionRadius || 40;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };

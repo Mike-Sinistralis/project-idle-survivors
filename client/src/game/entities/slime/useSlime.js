@@ -15,7 +15,7 @@ const useSlime = (id) => {
   const { baseSpeed, baseHealth, getSpeedModifier } = slimeStore();
   const { getEntity } = useEntityManager();
   const slimeEntity = getEntity(id);
-  const { health, speed } = slimeEntity;
+  const { health, speed, collisionRadius } = slimeEntity;
 
   /*
     If the component this data is tied to mounts, initialize the entity data.
@@ -24,6 +24,7 @@ const useSlime = (id) => {
   useEffect(() => {
     slimeEntity.speed = speed || baseSpeed + getSpeedModifier();
     slimeEntity.health = health || baseHealth;
+    slimeEntity.collisionRadius = collisionRadius || 20;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

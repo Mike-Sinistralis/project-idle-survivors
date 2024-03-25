@@ -28,6 +28,7 @@ const ENTITY_COMPONENTS = {
 // Global Context - Changes here affect all slimes
 const useEntityManager = create((set, get) => ({
   entityList: new Map([]),
+  entityIds: new Set([]),
   // This is used to force updates to components when entity lists change.
   version: 0,
   registerEntity: (entityType, entity = {}) => {
@@ -35,7 +36,7 @@ const useEntityManager = create((set, get) => ({
     * Get's an ID from generateId, ensures it isn't currently used, then registers the entity with that ID and returns the ID back to the caller
     */
     let id = idGenerator.next().value;
-    const { version, entityList } = get();
+    const { version, entityList, entityIds } = get();
 
     while (entityList.has(id)) {
       id = idGenerator.next().value;
@@ -45,12 +46,13 @@ const useEntityManager = create((set, get) => ({
     entity.id = id;
 
     entityList.set(id, entity);
+    entityIds.add(id);
 
     set({ version: version + versionGenerator.next().value });
     return id;
   },
   registerEntities: (entities = []) => {
-    const { version, entityList } = get();
+    const { version, entityList, entityIds } = get();
     const entityIdList = [];
 
     entities.forEach(({ entityType, entity }) => {
@@ -67,6 +69,7 @@ const useEntityManager = create((set, get) => ({
       entity.id = id;
 
       entityIdList.push(id);
+      entityIds.add(id);
 
       entityList.set(id, entity);
     });
@@ -76,20 +79,23 @@ const useEntityManager = create((set, get) => ({
   },
   getEntity: (id) => {
     const { entityList } = get();
+
     return entityList.get(id) || {};
   },
   unregisterEntity: (id) => {
-    const { version, entityList } = get();
+    const { version, entityList, entityIds } = get();
 
     entityList.delete(id);
+    entityIds.delete(id);
 
     set({ version: version + versionGenerator.next().value });
   },
-  unregisterEntities: (entityIds) => {
-    const { entityList, version } = get();
+  unregisterEntities: (ids) => {
+    const { version, entityList, entityIds } = get();
 
-    entityIds.forEach((id) => {
+    ids.forEach((id) => {
       entityList.delete(id);
+      entityIds.delete(id);
     });
 
     set({ version: version + versionGenerator.next().value });
