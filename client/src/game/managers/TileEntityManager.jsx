@@ -11,7 +11,7 @@ function isColliding(entityA, entityB) {
   return distance < (entityA.collisionRadius + entityB.collisionRadius);
 }
 
-let didInit = false;
+// For some reason saving this file kills everything, need to figure out why.
 
 function TileEntityManager({ width, height }) {
   const {
@@ -44,7 +44,6 @@ function TileEntityManager({ width, height }) {
   }, [entityList, getEntity, getPlayer, registerEntities, registerEntity, registerPlayer, unregisterEntities, unregisterEntity, unregisterPlayer]);
 
   useEffect(() => {
-    if (didInit) return;
     // In the future, the Scene or Biome or Level will be responsible for registering entities
     registerPlayer({
       position: { x: 0, y: 0 },
@@ -52,7 +51,7 @@ function TileEntityManager({ width, height }) {
       direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
     });
 
-    registerEntities(Array.from({ length: 5 }).map(() => ({
+    const slimeIds = registerEntities(Array.from({ length: 1 }).map(() => ({
       entityType: ENTITY_TYPES.SLIME,
       entity: {
         position: { x: 0, y: 0 },
@@ -61,7 +60,10 @@ function TileEntityManager({ width, height }) {
       },
     })));
 
-    didInit = true;
+    return () => {
+      unregisterPlayer();
+      unregisterEntities(slimeIds);
+    };
   }, [height, registerEntities, registerPlayer, unregisterEntities, unregisterPlayer, width]);
 
   /*
@@ -100,6 +102,8 @@ function TileEntityManager({ width, height }) {
       return <Component key={id} stageWidth={width} stageHeight={height} id={id} version={version} />;
     });
   }, [entityList, getPlayer, width, height, version]);
+
+  console.log(entityComponents);
 
   return (
     <Container>

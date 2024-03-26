@@ -28,7 +28,8 @@
     "react-router-dom": "6.22.1",
     "react-toastify": "10.0.5",
     "socket.io-client": "4.7.5",
-    "zustand": "4.5.1"
+    "zustand": "4.5.1",
+    "zustymiddleware": "1.2.0"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "5.28.6",

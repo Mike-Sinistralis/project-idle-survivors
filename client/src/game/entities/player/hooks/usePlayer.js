@@ -7,7 +7,7 @@ const playerStore = create(() => ({
   handleEntityCollide: (entity, player) => {
     const { id: entityId, type } = entity;
 
-    console.log(`Player collided with entity ${entityId} of type ${type} at position ${player.position.x}, ${player.position.y}!`);
+    // console.log(`Player collided with entity ${entityId} of type ${type} at position ${player.position.x}, ${player.position.y}!`);
   },
 }));
 
@@ -25,8 +25,7 @@ const usePlayer = (getPlayer) => {
     playerEntity.speed = speed || baseSpeed;
     playerEntity.collisionRadius = collisionRadius || 20;
     playerEntity.onCollide = onCollide || handleEntityCollide;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [baseSpeed, collisionRadius, handleEntityCollide, onCollide, playerEntity, speed]);
 };
 
 export { usePlayer };

@@ -10,7 +10,7 @@ const slimeStore = create(() => ({
   handleEntityCollide: (slime, entity) => {
     const { id: entityId, type } = entity;
 
-    console.log(`Slime collided with entity ${entityId || 'Player'} of type ${type} at position ${slime.position.x}, ${slime.position.y}!`);
+    // console.log(`Slime collided with entity ${entityId || 'Player'} of type ${type} at position ${slime.position.x}, ${slime.position.y}!`);
   },
 }));
 
@@ -36,8 +36,7 @@ const useSlime = (getEntity, id) => {
     slimeEntity.health = health || baseHealth;
     slimeEntity.collisionRadius = collisionRadius || 10;
     slimeEntity.onCollide = onCollide || handleEntityCollide;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [baseHealth, baseSpeed, collisionRadius, getSpeedModifier, handleEntityCollide, health, onCollide, slimeEntity, speed]);
 
   const onSlow = useCallback((slowAmount = 1) => {
     const newSpeed = Math.max(speed - slowAmount, 0);

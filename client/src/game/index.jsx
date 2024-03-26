@@ -1,11 +1,12 @@
 import { Stage } from '@pixi/react';
-import { useMemo, useState, useEffect } from 'react';
+import {
+  useMemo, useState, useEffect, useCallback,
+} from 'react';
 import styled from '@emotion/styled';
 
 import Grassland from 'game/sprites/settings/Grassland';
 import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
-import { useSessionKey } from 'auth/hooks/useSessionKey';
 import 'game/websocket';
 import { useLogout } from 'auth/hooks/useLogout';
 import TileEntityManager from './managers/TileEntityManager';
@@ -25,7 +26,9 @@ const FullScreenWrapper = styled.div`
 function View({ stageProps }) {
   return (
     <FullScreenWrapper>
-      <Stage {...stageProps}>
+      <Stage
+        {...stageProps}
+      >
         {/*
           <SceneManager /> - Handles Backgrounds, Tilemaps, anything visual that isn't a tile entity
           <NetworkManager /> - Player presence, etc. No collision detection. Maybe movement
@@ -64,6 +67,21 @@ function Model() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    const handleRightClick = (event) => {
+      // Assuming you want to block right-clicks on the entire page
+      event.preventDefault();
+    };
+
+    // Attach the event listener to the document
+    document.addEventListener('contextmenu', handleRightClick);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('contextmenu', handleRightClick);
+    };
+  }, []);
+
   const stageProps = useMemo(() => ({
     width: windowSize.width,
     height: windowSize.height,
@@ -71,7 +89,7 @@ function Model() {
       backgroundAlpha: 0,
       antialias: true,
     },
-  }), [windowSize]);
+  }), [windowSize.height, windowSize.width]);
 
   const logout = async () => doLogout();
 
