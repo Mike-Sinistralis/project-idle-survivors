@@ -48,12 +48,6 @@ function TileEntityManager({ width, height }) {
 
   useEffect(() => {
     // In the future, the Scene or Biome or Level will be responsible for registering entities
-    registerPlayer({
-      position: { x: 0, y: 0 },
-      screenPosition: { x: width / 2, y: height / 2 },
-      direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-    });
-
     const slimeIds = registerEntities(Array.from({ length: 1 }).map(() => ({
       entityType: ENTITY_TYPES.SLIME,
       entity: {
@@ -64,8 +58,20 @@ function TileEntityManager({ width, height }) {
     })));
 
     return () => {
-      unregisterPlayer();
       unregisterEntities(slimeIds);
+    };
+  }, [registerEntities, registerPlayer, unregisterEntities, unregisterPlayer]);
+
+  useEffect(() => {
+    // In the future, the Scene or Biome or Level will be responsible for registering entities
+    registerPlayer({
+      position: { x: 0, y: 0 },
+      screenPosition: { x: width / 2, y: height / 2 },
+      direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
+    });
+
+    return () => {
+      unregisterPlayer();
     };
   }, [height, registerEntities, registerPlayer, unregisterEntities, unregisterPlayer, width]);
 

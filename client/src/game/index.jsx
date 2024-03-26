@@ -1,6 +1,6 @@
 import { Stage } from '@pixi/react';
 import {
-  useMemo, useState, useEffect, useRef,
+  useMemo, useState, useEffect, useRef, useCallback,
 } from 'react';
 import styled from '@emotion/styled';
 
@@ -24,11 +24,13 @@ const FullScreenWrapper = styled.div`
 /*
   Figure out resolution scaling
 */
-function View({ stageProps }) {
+function View({ width, height, stageOptions }) {
   return (
     <FullScreenWrapper>
       <Stage
-        {...stageProps}
+        width={width}
+        height={height}
+        options={stageOptions}
       >
         {/*
           <SceneManager /> - Handles Backgrounds, Tilemaps, anything visual that isn't a tile entity
@@ -41,7 +43,9 @@ function View({ stageProps }) {
         <Grassland />
         <Desert />
         <TileEntityManager
-          {...stageProps}
+          width={width}
+          height={height}
+          options={stageOptions}
         />
       </Stage>
     </FullScreenWrapper>
@@ -56,19 +60,21 @@ function Model() {
     height: window.innerHeight,
   });
 
-  const debouncedResize = useRef(debounce(setWindowSize, 50));
+  // Define a stable handleResize function using useCallback
+  const handleResize = useCallback(() => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }, []);
+
+  const debouncedResize = useRef(debounce(handleResize, 50));
 
   useEffect(() => {
-    const handleResize = () => {
-      debouncedResize.current({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
+    window.addEventListener('resize', debouncedResize.current);
 
-    window.addEventListener('resize', handleResize);
-
-    return () => window.removeEventListener('resize', handleResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => window.removeEventListener('resize', debouncedResize.current);
   }, [debouncedResize]);
 
   useEffect(() => {
@@ -86,21 +92,22 @@ function Model() {
     };
   }, []);
 
-  const stageProps = useMemo(() => ({
-    width: windowSize.width,
-    height: windowSize.height,
-    options: {
+  const stageOptions = useMemo(() => {
+    console.log('Creating stage options');
+    return {
       backgroundAlpha: 0,
       antialias: true,
-    },
-  }), [windowSize.height, windowSize.width]);
+    };
+  }, []);
 
   const logout = async () => doLogout();
 
   window.logout = logout;
 
   const hookProps = {
-    stageProps,
+    width: windowSize.width,
+    height: windowSize.height,
+    stageOptions,
   };
 
   return (

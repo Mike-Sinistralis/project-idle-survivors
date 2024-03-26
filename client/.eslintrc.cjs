@@ -38,7 +38,7 @@ module.exports = {
     'react/react-in-jsx-scope': 0, // no longer nessecary
     'react/prop-types': 0, // Proptypes don't really offer much value but consume a lot of time
     'import/prefer-default-export': 0, // Default exports require more refactoring when you want to add more exports
-
+    'import/no-named-as-default': 0, // This is a bit too strict
     'react/jsx-no-target-blank': 'off',
     'react-refresh/only-export-components': [
       'warn',
