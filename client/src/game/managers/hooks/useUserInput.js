@@ -25,12 +25,10 @@ const useUserInput = () => {
 
   const handleKeyDown = useCallback((event) => {
     setPressed(event.key.toLowerCase());
-    console.log('pressed', event.key.toLowerCase());
   }, [setPressed]);
 
   const handleKeyUp = useCallback((event) => {
     removePressed(event.key.toLowerCase());
-    console.log('un-pressed', event.key.toLowerCase());
   }, [removePressed]);
 
   useEffect(() => {

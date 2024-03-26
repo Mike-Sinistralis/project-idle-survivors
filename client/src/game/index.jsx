@@ -92,13 +92,10 @@ function Model() {
     };
   }, []);
 
-  const stageOptions = useMemo(() => {
-    console.log('Creating stage options');
-    return {
-      backgroundAlpha: 0,
-      antialias: true,
-    };
-  }, []);
+  const stageOptions = useMemo(() => ({
+    backgroundAlpha: 0,
+    antialias: true,
+  }), []);
 
   const logout = async () => doLogout();
 

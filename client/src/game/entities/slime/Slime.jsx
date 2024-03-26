@@ -38,7 +38,6 @@ function Slime({
     const sprite = spriteRef.current;
 
     if (sprite && textures.length > 0) {
-      sprite.auto = true; // Make the sprite interactive
       sprite.on('pointertap', handleSlimeClick); // Add an event listener
     }
 
@@ -75,17 +74,9 @@ function Slime({
       newDirection = { x: direction.x, y: -direction.y };
     }
 
-    // console.log(' before ', {
-    //   slimeEntity: { position: slimeEntity.position, screenPosition: slimeEntity.screenPosition, direction: slimeEntity.direction },
-    //   newPos, newScreenPos, newDirection, stageWidth, stageHeight, viewport, position,
-    // });
     slimeEntity.position = newPos;
     slimeEntity.screenPosition = newScreenPos;
     slimeEntity.direction = newDirection || direction;
-    // console.log(' after ', {
-    //   slimeEntity: { position: slimeEntity.position, screenPosition: slimeEntity.screenPosition, direction: slimeEntity.direction },
-    //   newPos, newScreenPos, newDirection,
-    // });
   });
 
   if (textures.length === 0) {
@@ -98,7 +89,6 @@ function Slime({
       textures={textures}
       position={screenPosition}
       interactive // Make the sprite interactive
-      buttonMode // Changes the cursor on hover
       pointerdown={handleSlimeClick} // Add the click event listener
       {...renderableProps}
       {...props}
