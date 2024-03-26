@@ -15,7 +15,7 @@ function Slime({
 }) {
   const { getEntity } = useEntityManager();
   const slimeEntity = getEntity(id);
-  const { onSlow } = useSlime(getEntity, id);
+  const { onSlow } = useSlime(id);
 
   const { textures, spriteRef, ...renderableProps } = useRenderable({
     renderId: RENDER_IDS.SLIME,
@@ -38,8 +38,7 @@ function Slime({
     const sprite = spriteRef.current;
 
     if (sprite && textures.length > 0) {
-      sprite.interactive = true; // Make the sprite interactive
-      sprite.buttonMode = true; // Change the cursor on hover
+      sprite.auto = true; // Make the sprite interactive
       sprite.on('pointertap', handleSlimeClick); // Add an event listener
     }
 
@@ -76,9 +75,17 @@ function Slime({
       newDirection = { x: direction.x, y: -direction.y };
     }
 
+    // console.log(' before ', {
+    //   slimeEntity: { position: slimeEntity.position, screenPosition: slimeEntity.screenPosition, direction: slimeEntity.direction },
+    //   newPos, newScreenPos, newDirection, stageWidth, stageHeight, viewport, position,
+    // });
     slimeEntity.position = newPos;
     slimeEntity.screenPosition = newScreenPos;
     slimeEntity.direction = newDirection || direction;
+    // console.log(' after ', {
+    //   slimeEntity: { position: slimeEntity.position, screenPosition: slimeEntity.screenPosition, direction: slimeEntity.direction },
+    //   newPos, newScreenPos, newDirection,
+    // });
   });
 
   if (textures.length === 0) {

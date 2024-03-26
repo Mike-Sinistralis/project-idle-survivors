@@ -1,6 +1,6 @@
 import { Stage } from '@pixi/react';
 import {
-  useMemo, useState, useEffect, useCallback,
+  useMemo, useState, useEffect, useRef,
 } from 'react';
 import styled from '@emotion/styled';
 
@@ -9,6 +9,7 @@ import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
 import 'game/websocket';
 import { useLogout } from 'auth/hooks/useLogout';
+import { debounce } from 'util/debounce';
 import TileEntityManager from './managers/TileEntityManager';
 
 const FullScreenWrapper = styled.div`
@@ -55,17 +56,20 @@ function Model() {
     height: window.innerHeight,
   });
 
+  const debouncedResize = useRef(debounce(setWindowSize, 50));
+
   useEffect(() => {
     const handleResize = () => {
-      setWindowSize({
+      debouncedResize.current({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     };
 
     window.addEventListener('resize', handleResize);
+
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [debouncedResize]);
 
   useEffect(() => {
     const handleRightClick = (event) => {

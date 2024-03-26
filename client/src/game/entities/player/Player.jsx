@@ -13,13 +13,15 @@ const baseTexture = BaseTexture.from(PlayerSprite);
 const frames = [];
 frames.push(new Texture(baseTexture));
 
+const inputKeys = ['w', 'a', 's', 'd'];
+
 function Player({
   stageWidth, stageHeight, ...props
 }) {
   const { getPlayer } = useEntityManager();
   const playerEntity = getPlayer();
 
-  usePlayer(getPlayer);
+  usePlayer();
 
   const { isPressed } = keyStore();
 
@@ -52,7 +54,7 @@ function Player({
       d: () => { normalDirection.x += 1; },
     };
 
-    Object.keys(inputMap).forEach((key) => {
+    inputKeys.forEach((key) => {
       if (isPressed(key)) {
         inputMap[key]();
       }
@@ -71,6 +73,7 @@ function Player({
 
   useTick((delta) => {
     if (!speed) return;
+
     // Update position based on direction and delta time
     const newPos = {
       x: position.x + direction.x * speed * delta,

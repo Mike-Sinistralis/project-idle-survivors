@@ -4,16 +4,23 @@ import Slime from 'game/entities/slime/Slime';
 import { create } from 'zustand';
 
 // Function that generates sequential ID's that loop back around after reaching 100k
-function* generateId() {
+function* generateId(limit = 1000000) {
   let id = 0;
   while (true) {
     yield id;
-    id = (id + 1) % 100000;
+    id = (id + 1) % limit;
   }
 }
 
 const idGenerator = generateId();
-const versionGenerator = generateId();
+
+/*
+  React is heavily dependent on immutable data patterns, but we need the performance, so we use an incremental number to force
+  updates when certain things happen
+*/
+const entityListVersion = generateId(1000);
+const playerDataVersion = generateId(64);
+const entityDataVersion = generateId(64);
 
 const ENTITY_TYPES = {
   SLIME: 'slime',
@@ -30,21 +37,21 @@ const useEntityManager = create((set, get) => ({
   entityList: new Map([]),
   entityIds: new Set([]),
   // This is used to force updates to components when entity lists change.
-  version: 0,
+  entityListVersion: 0,
+  playerDataVersion: 0,
+  entityDataVersion: 0,
   registerPlayer: (entity = {}) => {
-    const { version } = get();
-
     entity.type = ENTITY_TYPES.PLAYER;
     entity.id = 'player';
 
-    set({ version: version + versionGenerator.next().value, player: entity });
+    set({ version: entityListVersion.next().value, player: entity });
   },
   registerEntity: (entityType, entity = {}) => {
     /*
     * Get's an ID from generateId, ensures it isn't currently used, then registers the entity with that ID and returns the ID back to the caller
     */
     let id = idGenerator.next().value;
-    const { version, entityList, entityIds } = get();
+    const { entityList, entityIds } = get();
 
     while (entityList.has(id)) {
       id = idGenerator.next().value;
@@ -56,11 +63,11 @@ const useEntityManager = create((set, get) => ({
     entityList.set(id, entity);
     entityIds.add(id);
 
-    set({ version: version + versionGenerator.next().value });
+    set({ version: entityListVersion.next().value });
     return id;
   },
   registerEntities: (entities = []) => {
-    const { version, entityList, entityIds } = get();
+    const { entityList, entityIds } = get();
     const entityIdList = [];
 
     entities.forEach(({ entityType, entity }) => {
@@ -82,7 +89,7 @@ const useEntityManager = create((set, get) => ({
       entityList.set(id, entity);
     });
 
-    set({ version: version + versionGenerator.next().value });
+    set({ version: entityListVersion.next().value });
     return entityIdList;
   },
   getEntity: (id) => {
@@ -96,27 +103,31 @@ const useEntityManager = create((set, get) => ({
     return player;
   },
   unregisterPlayer: () => {
-    const { version } = get();
-
-    set({ version: version + versionGenerator.next().value, player: null });
+    set({ version: entityListVersion.next().value, player: null });
   },
   unregisterEntity: (id) => {
-    const { version, entityList, entityIds } = get();
+    const { entityList, entityIds } = get();
 
     entityList.delete(id);
     entityIds.delete(id);
 
-    set({ version: version + versionGenerator.next().value });
+    set({ version: entityListVersion.next().value });
   },
   unregisterEntities: (ids) => {
-    const { version, entityList, entityIds } = get();
+    const { entityList, entityIds } = get();
 
     ids.forEach((id) => {
       entityList.delete(id);
       entityIds.delete(id);
     });
 
-    set({ version: version + versionGenerator.next().value });
+    set({ version: entityListVersion.next().value });
+  },
+  incrementPlayerDataVersion: () => {
+    set({ playerDataVersion: playerDataVersion.next().value });
+  },
+  incrementEntityDataVersion: () => {
+    set({ entityDataVersion: entityDataVersion.next().value });
   },
 }));
 

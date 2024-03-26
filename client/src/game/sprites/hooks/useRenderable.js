@@ -20,6 +20,7 @@ function useRenderable({
 
   const [textures, setTextures] = useState([]);
   const spriteRef = useRef(null);
+
   const {
     numberOfFrames,
     sprite,

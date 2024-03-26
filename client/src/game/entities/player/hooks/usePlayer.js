@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 
@@ -11,8 +12,10 @@ const playerStore = create(() => ({
   },
 }));
 
-const usePlayer = (getPlayer) => {
+const usePlayer = () => {
   const { baseSpeed, handleEntityCollide } = playerStore();
+  const { getPlayer, incrementPlayerDataVersion } = useEntityManager();
+
   const playerEntity = getPlayer();
 
   const { speed, collisionRadius, onCollide } = playerEntity;
@@ -25,7 +28,9 @@ const usePlayer = (getPlayer) => {
     playerEntity.speed = speed || baseSpeed;
     playerEntity.collisionRadius = collisionRadius || 20;
     playerEntity.onCollide = onCollide || handleEntityCollide;
-  }, [baseSpeed, collisionRadius, handleEntityCollide, onCollide, playerEntity, speed]);
+
+    incrementPlayerDataVersion();
+  }, [baseSpeed, collisionRadius, handleEntityCollide, incrementPlayerDataVersion, onCollide, playerEntity, speed]);
 };
 
 export { usePlayer };

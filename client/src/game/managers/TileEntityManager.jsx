@@ -39,9 +39,12 @@ function TileEntityManager({ width, height }) {
     window.getPlayer = getPlayer;
     window.registerPlayer = registerPlayer;
     window.unregisterPlayer = unregisterPlayer;
+    window.version = version;
 
     window.ENTITY_TYPES = ENTITY_TYPES;
-  }, [entityList, getEntity, getPlayer, registerEntities, registerEntity, registerPlayer, unregisterEntities, unregisterEntity, unregisterPlayer]);
+  }, [entityList, getEntity, getPlayer, registerEntities, registerEntity, registerPlayer, unregisterEntities, unregisterEntity, unregisterPlayer, version]);
+
+  const player = getPlayer();
 
   useEffect(() => {
     // In the future, the Scene or Biome or Level will be responsible for registering entities
@@ -73,23 +76,22 @@ function TileEntityManager({ width, height }) {
     and should be handled in the onCollide function.
   */
   useTick((delta) => {
-    const player = getPlayer();
-
     if (!player) return;
 
     entityIds.forEach((idA) => {
       const entityA = getEntity(idA);
 
       if (isColliding(entityA, player)) {
-        entityA?.onCollide(entityA, player);
-        player?.onCollide(player, entityA);
+        entityA?.onCollide(entityA, player, delta);
+        player?.onCollide(player, entityA, delta);
       }
     });
   });
 
   const entityComponents = useMemo(() => {
     const entitiesArray = Array.from(entityList.values());
-    const player = getPlayer();
+
+    if (!entitiesArray.length) return false;
 
     if (player) {
       entitiesArray.push(player);
@@ -101,9 +103,7 @@ function TileEntityManager({ width, height }) {
       const Component = ENTITY_COMPONENTS[type];
       return <Component key={id} stageWidth={width} stageHeight={height} id={id} version={version} />;
     });
-  }, [entityList, getPlayer, width, height, version]);
-
-  console.log(entityComponents);
+  }, [entityList, width, height, version, player]);
 
   return (
     <Container>

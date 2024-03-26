@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { useEntityManager } from 'game/managers/hooks/useTileEntityManager';
 import { useCallback, useEffect } from 'react';
 import { create } from 'zustand';
 
@@ -15,11 +16,13 @@ const slimeStore = create(() => ({
 }));
 
 // Instance Context - Changes here affect individual slimes
-const useSlime = (getEntity, id) => {
+const useSlime = (id) => {
   // Get the base stats for a Slime
   const {
     baseSpeed, baseHealth, getSpeedModifier, handleEntityCollide,
   } = slimeStore();
+
+  const { getEntity, incrementEntityDataVersion } = useEntityManager();
 
   const slimeEntity = getEntity(id);
 
@@ -32,11 +35,13 @@ const useSlime = (getEntity, id) => {
     Keep in mind this entity might have already been registered, but was culled, so check if it exists.
   */
   useEffect(() => {
-    slimeEntity.speed = speed || baseSpeed + getSpeedModifier();
+    slimeEntity.speed = speed !== undefined ? speed : baseSpeed + getSpeedModifier();
     slimeEntity.health = health || baseHealth;
     slimeEntity.collisionRadius = collisionRadius || 10;
     slimeEntity.onCollide = onCollide || handleEntityCollide;
-  }, [baseHealth, baseSpeed, collisionRadius, getSpeedModifier, handleEntityCollide, health, onCollide, slimeEntity, speed]);
+
+    incrementEntityDataVersion();
+  }, [baseHealth, baseSpeed, collisionRadius, getSpeedModifier, handleEntityCollide, health, incrementEntityDataVersion, onCollide, slimeEntity, speed]);
 
   const onSlow = useCallback((slowAmount = 1) => {
     const newSpeed = Math.max(speed - slowAmount, 0);

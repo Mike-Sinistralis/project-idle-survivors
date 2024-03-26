@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 
-// Global Context - Changes here affect all slimes
 const viewport = create((set) => ({
   offset: { x: 0, y: 0 },
   setOffset: (state) => {
