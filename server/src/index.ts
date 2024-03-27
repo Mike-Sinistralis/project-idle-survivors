@@ -1,5 +1,5 @@
 // This has to be done first, do not move this
-import '#root/env-setup.js';
+import 'env-setup.js';
 
 import http from 'http';
 import express from 'express';
@@ -8,13 +8,13 @@ import cors from 'cors';
 import { Server as SocketIoServer } from 'socket.io';
 import sharedsession from 'express-socket.io-session';
 
-import Logger from '#root/logger.js';
-import { bootstrapDatabase } from '#root/db/bootstrap/index.js';
-import { pingDatabase } from '#root/db/pgClient.js';
+import Logger from 'logger.js';
+import { bootstrapDatabase } from 'db/bootstrap/index.js';
+import { pingDatabase } from 'db/pgClient.js';
 
-import authRoutes from '#root/routes/auth.js';
-import gameRoutes from '#root/routes/game.js';
-import userRoutes from '#root/routes/user.js';
+import authRoutes from 'routes/auth.js';
+import gameRoutes from 'routes/game.js';
+import userRoutes from 'routes/user.js';
 
 const { PORT, SESSION_SECRET, CORS_ORIGIN } = process.env;
 const app = express();

@@ -13,11 +13,8 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
-      alias: {
-        map: [
-          ['#root', './server/src'],
-        ],
-        extensions: ['.js', '.json'],
+      node: {
+        paths: ['ldtk-toolbox/src'],
       },
       typescript: {},
     },

@@ -1,4 +1,4 @@
-import Logger from '#root/logger.js';
+import Logger from 'logger.js';
 
 const bootstrapUsers = async (pool) => {
   Logger.info('Creating user table and inserting data...');

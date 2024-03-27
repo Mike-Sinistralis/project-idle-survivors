@@ -1,5 +1,5 @@
-import SessionPersistanceError from '#root/errors/SessionPersistanceError.js';
-import Logger from '#root/logger.js';
+import SessionPersistanceError from 'errors/SessionPersistanceError.js';
+import Logger from 'logger.js';
 
 const initializeSession = async (req, user) => {
   Logger.info(`Creating session for ${user.username} with ID ${user.userID}`);

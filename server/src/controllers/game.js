@@ -1,5 +1,5 @@
-import Logger from '#root/logger.js';
-import { getSaveByUserId } from '#root/managers/gameManager.js';
+import Logger from 'logger.js';
+import { getSaveByUserId } from 'managers/gameManager.js';
 
 const getSavedGame = async (req, res) => {
   if (!req.session.userID) {

@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   getUserDetails,
-} from '#root/controllers/user.js';
+} from 'controllers/user.js';
 
 const router = express.Router();
 

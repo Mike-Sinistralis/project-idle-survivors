@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
-import Logger from '#root/logger.js';
+import Logger from 'logger.js';
 
-import { createAccount, getAccountByUsername } from '#root/managers/authManager.js';
-import { destroySession, initializeSession } from '#root/managers/sessionManager.js';
+import { createAccount, getAccountByUsername } from 'managers/authManager.js';
+import { destroySession, initializeSession } from 'managers/sessionManager.js';
 
 const register = async (req, res) => {
   try {

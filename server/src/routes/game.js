@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   saveGame, getSavedGame,
-} from '#root/controllers/game.js';
+} from 'controllers/game.js';
 
 const router = express.Router();
 

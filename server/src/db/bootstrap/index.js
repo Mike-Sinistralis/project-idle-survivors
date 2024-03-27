@@ -1,6 +1,6 @@
 import pg from 'pg';
 
-import Logger from '#root/logger.js';
+import Logger from 'logger.js';
 import { bootstrapMigrationsLog } from './_migrations_log.js';
 import { bootstrapUsers } from './user.js';
 

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 
-import { pool } from '#root/db/pgClient.js';
-import Logger from '#root/logger.js';
+import { pool } from 'db/pgClient.js';
+import Logger from 'logger.js';
 
 const createAccount = async (username, password) => {
   Logger.info(`Creating account for ${username}`);

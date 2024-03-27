@@ -1,5 +1,5 @@
-import { pool } from '#root/db/pgClient.js';
-import Logger from '#root/logger.js';
+import { pool } from 'db/pgClient.js';
+import Logger from 'logger.js';
 
 const getUserById = async (userID) => {
   Logger.info(`Getting user details for ${userID}`);

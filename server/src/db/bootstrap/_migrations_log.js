@@ -1,4 +1,4 @@
-import Logger from '#root/logger.js';
+import Logger from 'logger.js';
 
 const bootstrapMigrationsLog = async (pool) => {
   Logger.info('Creating _migrations_log table and inserting data...');

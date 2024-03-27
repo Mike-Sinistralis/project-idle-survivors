@@ -1,5 +1,5 @@
-import Logger from '#root/logger.js';
-import { getUserById } from '#root/managers/userManager.js';
+import Logger from 'logger.js';
+import { getUserById } from 'managers/userManager.js';
 
 const getUserDetails = async (req, res) => {
   if (!req.session.userID) {
