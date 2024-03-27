@@ -3,6 +3,7 @@ import pg from 'pg';
 import Logger from 'logger.js';
 import { bootstrapMigrationsLog } from './_migrations_log.js';
 import { bootstrapUsers } from './user.js';
+import { bootstrapUserSession } from './user-session.js';
 
 const { Pool } = pg;
 
@@ -43,6 +44,7 @@ const bootstrapDatabase = async () => {
       // Bootstrap tables and data, 1 file per table
       await bootstrapMigrationsLog(idleSurvivorsPool);
       await bootstrapUsers(idleSurvivorsPool);
+      await bootstrapUserSession(idleSurvivorsPool);
 
       Logger.info('Database and table created successfully');
     } else {

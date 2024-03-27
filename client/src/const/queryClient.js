@@ -1,7 +1,7 @@
 import { QueryCache, QueryClient } from '@tanstack/react-query';
 
 import ApiError from 'errors/ApiError';
-import { useSessionKey } from 'auth/hooks/useSessionKey';
+import clientLogout from 'util/logout';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,10 +24,7 @@ const queryClient = new QueryClient({
 
       if (error.status === 401) {
         if (query.queryKey[0] === 'currentUser') {
-          const { setSessionKey } = useSessionKey.getState();
-
-          queryClient.invalidateQueries('currentUser');
-          setSessionKey(null);
+          clientLogout();
         }
       }
     },

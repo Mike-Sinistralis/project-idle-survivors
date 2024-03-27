@@ -6,7 +6,9 @@ import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import { Server as SocketIoServer } from 'socket.io';
-import sharedsession from 'express-socket.io-session';
+
+import connectPgSimple from 'connect-pg-simple';
+import { pool } from 'db/pgClient.js';
 
 import Logger from 'logger.js';
 import { bootstrapDatabase } from 'db/bootstrap/index.js';
@@ -20,7 +22,13 @@ import socketRoutes from 'socketRoutes';
 const { PORT, SESSION_SECRET, CORS_ORIGIN } = process.env;
 const app = express();
 
+const PgSession = connectPgSimple(session);
+
 const expressSession = session({
+  store: new PgSession({
+    pool, // Use your existing PostgreSQL pool
+    tableName: 'user-session', // Optional. Use a different table name if you prefer
+  }),
   secret: SESSION_SECRET, // A secret key used for signing the session ID cookie
   resave: true, // Don't save session if unmodified
   saveUninitialized: true, // Save sessions that are new, but not modified
@@ -52,9 +60,7 @@ const io = new SocketIoServer(httpServer, {
   },
 });
 
-io.use(sharedsession(expressSession, {
-  autoSave: true,
-}));
+io.engine.use(expressSession);
 
 io.on('connection', (socket) => {
   socketRoutes(socket);
@@ -70,4 +76,7 @@ const startServer = async () => {
   }
 };
 
+/*
+  @link chrome://inspect
+*/
 startServer();

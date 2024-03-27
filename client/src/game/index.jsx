@@ -7,7 +7,6 @@ import styled from '@emotion/styled';
 import Grassland from 'game/sprites/settings/Grassland';
 import Desert from 'game/sprites/settings/Desert';
 import UserInputManager from 'game/managers/UserInputManager';
-import 'game/websocket';
 import { useLogout } from 'auth/hooks/useLogout';
 import { debounce } from 'util/debounce';
 import TileEntityManager from './managers/TileEntityManager';

@@ -20,6 +20,7 @@ export default defineConfig({
       game: '/src/game',
       root: '/src/root',
       util: '/src/util',
+      websocket: '/src/websocket',
     },
   },
 });
