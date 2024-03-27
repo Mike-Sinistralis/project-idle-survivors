@@ -29,14 +29,26 @@ const Logger = winston.createLogger({
   levels,
   level: process.env.LOG_LEVEL || 'info',
   format: winston.format.combine(
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     winston.format.errors({ stack: true }), // Log the full stack
     winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
   ),
   transports: [
     transport,
     new winston.transports.Console({
-      format: winston.format.simple(),
+      format: winston.format.combine(
+        winston.format.colorize({
+          all: true,
+        }),
+        winston.format.label({
+          label: '[LOGGER]',
+        }),
+        winston.format.timestamp({
+          format: 'YYYY-MM-DD HH:mm:ss',
+        }),
+        winston.format.printf(
+          (info) => ` ${info.label}  ${info.timestamp}  ${info.level} : ${info.message}`,
+        ),
+      ),
     }),
   ],
 });

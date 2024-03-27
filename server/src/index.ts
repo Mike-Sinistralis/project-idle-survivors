@@ -15,14 +15,16 @@ import { pingDatabase } from 'db/pgClient.js';
 import authRoutes from 'routes/auth.js';
 import gameRoutes from 'routes/game.js';
 import userRoutes from 'routes/user.js';
+import socketRoutes from 'socketRoutes';
 
 const { PORT, SESSION_SECRET, CORS_ORIGIN } = process.env;
 const app = express();
 
 const expressSession = session({
   secret: SESSION_SECRET, // A secret key used for signing the session ID cookie
-  resave: false, // Don't save session if unmodified
+  resave: true, // Don't save session if unmodified
   saveUninitialized: true, // Save sessions that are new, but not modified
+  // TODO: Base secure off environment
   cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // Use secure cookies, and set the max age (in ms)
   rolling: true,
 });
@@ -55,16 +57,7 @@ io.use(sharedsession(expressSession, {
 }));
 
 io.on('connection', (socket) => {
-  Logger.info('a user connected');
-
-  socket.on('connected', (msg) => {
-    Logger.debug(`message: ${msg}`);
-    socket.emit('serverMessage', 'Hello World');
-  });
-
-  socket.on('disconnect', () => {
-    Logger.info('user disconnected');
-  });
+  socketRoutes(socket);
 });
 
 const startServer = async () => {
