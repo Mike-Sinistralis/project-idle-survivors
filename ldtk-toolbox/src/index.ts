@@ -1,16 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import Providers from 'root/Providers';
-import CssBaseline from '@mui/material/CssBaseline';
 import { World as WorldLoader } from 'ldtk';
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <CssBaseline />
-    <Providers />
-  </React.StrictMode>,
-);
-
 
 /* 
   world.levels.layerInstances
@@ -33,10 +21,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         - If the element being inserted is a collision layer (this seems to be arbitrary so we need a naming convention), tag it as collidable
         - I don't think we will use this for entities, but we can place entities or other things randomly once the "map" is built
 */
-WorldLoader.loadRaw('./src/assets/tilemaps/ldtk/dungeon.ldtk').then(async (world) => {
-  // You have access to the raw `LDtk` JSON file here
-  (window as any).world = world;
-  world.levels[0].layerInstances[4].__cWid
+WorldLoader.loadRaw('./src/tilemaps/dungeoun/dungeon.ldtk').then(async (world) => {
+  if (!world) {
+    console.error('Failed to load the world');
+    return;
+  }
+
+  debugger;
+  console.log(world);
 });
 
 /*
