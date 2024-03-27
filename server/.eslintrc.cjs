@@ -19,6 +19,7 @@ module.exports = {
         ],
         extensions: ['.js', '.json'],
       },
+      typescript: {},
     },
   },
   rules: {

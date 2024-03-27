@@ -8,9 +8,9 @@
     "build": "vite build --mode dev",
     "build:qa": "vite build --mode qa",
     "build:prod": "vite build --mode production",
-    "lint": "eslint --cache --ext js --ext jsx ./",
-    "lint:fix": "eslint --cache --fix --ext js --ext jsx ./",
-    "lint:watch": "eslint --cache --watch --ext js --ext jsx ./",
+    "lint": "eslint --cache --ext js --ext jsx --ext ts --ext jsx ./",
+    "lint:fix": "eslint --cache --fix --ext js --ext jsx --ext ts --ext tsx ./",
+    "lint:watch": "eslint --cache --watch --ext js --ext jsx --ext ts --ext tsx ./",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -39,6 +39,7 @@
     "eslint": "8.2.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-import-resolver-alias": "1.1.2",
+    "eslint-import-resolver-typescript": "3.6.1",
     "eslint-plugin-file-progress": "1.3.0",
     "eslint-plugin-import": "2.25.3",
     "eslint-plugin-jsx-a11y": "6.5.1",

@@ -14,7 +14,8 @@ module.exports = {
     "import/resolver": {
       "node": {
         "paths": ["client/src"]
-      }
+      },
+      typescript: {},
     },
   },
   ignorePatterns: [
@@ -32,6 +33,7 @@ module.exports = {
     // Required for eslint-plugin-file-progress
     'file-progress/activate': 1,
     'linebreak-style': 'off',
+    'import/no-cycle': 1,
 
     'no-lone-blocks': 0, // This prevents jsx comments
     'react/jsx-props-no-spreading': 0, // Spreading makes passing props from model to view way less redundant

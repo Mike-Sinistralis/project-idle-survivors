@@ -8,7 +8,7 @@ const playerStore = create(() => ({
   handleEntityCollide: (entity, player) => {
     const { id: entityId, type } = entity;
 
-    // console.log(`Player collided with entity ${entityId} of type ${type} at position ${player.position.x}, ${player.position.y}!`);
+    console.log(`Player collided with entity ${entityId} of type ${type} at position ${player.position.x}, ${player.position.y}!`);
   },
 }));
 

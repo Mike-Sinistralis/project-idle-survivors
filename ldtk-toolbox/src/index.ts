@@ -1,6 +1,6 @@
 import { World as WorldLoader } from 'ldtk';
 
-/* 
+/*
   world.levels.layerInstances
   - __gridSize contains the size of the grid. (Seems to always be a square so this will work for both dimentions)
   - __cWid is the size of the level horizontally
@@ -10,8 +10,8 @@ import { World as WorldLoader } from 'ldtk';
   - If entities, .entityInstances
     - px is an array of [x, y] coordinates
     - src is the tile that occupies this coordinate [x, y]
-    - You can get the grid size from 
-  
+    - You can get the grid size from
+
   So a builder would
     - For a level
       - determine grid size, total width, total height
@@ -30,9 +30,3 @@ WorldLoader.loadRaw('./src/tilemaps/dungeoun/dungeon.ldtk').then(async (world) =
   debugger;
   console.log(world);
 });
-
-/*
-  How to access Zutand data outside of a component
-
-  useTileEntityManager.getState().entityList
-*/

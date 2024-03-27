@@ -11,7 +11,7 @@ const slimeStore = create(() => ({
   handleEntityCollide: (slime, entity) => {
     const { id: entityId, type } = entity;
 
-    // console.log(`Slime collided with entity ${entityId || 'Player'} of type ${type} at position ${slime.position.x}, ${slime.position.y}!`);
+    console.log(`Slime collided with entity ${entityId || 'Player'} of type ${type} at position ${slime.position.x}, ${slime.position.y}!`);
   },
 }));
 
