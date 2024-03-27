@@ -32,10 +32,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         - Overwrite the element as you move up the layers
         - If the element being inserted is a collision layer (this seems to be arbitrary so we need a naming convention), tag it as collidable
         - I don't think we will use this for entities, but we can place entities or other things randomly once the "map" is built
-
 */
 WorldLoader.loadRaw('./src/assets/tilemaps/ldtk/dungeon.ldtk').then(async (world) => {
   // You have access to the raw `LDtk` JSON file here
   (window as any).world = world;
   world.levels[0].layerInstances[4].__cWid
 });
+
+/*
+  How to access Zutand data outside of a component
+
+  useTileEntityManager.getState().entityList
+*/
